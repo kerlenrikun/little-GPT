@@ -1,0 +1,24 @@
+# act 配置文件 - 定义本地测试使用的Docker镜像
+# 使用更小的镜像以提高性能
+
+# Ubuntu runners
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+-P ubuntu-22.04=catthehacker/ubuntu:act-22.04
+-P ubuntu-20.04=catthehacker/ubuntu:act-20.04
+
+# Windows runners (使用Linux镜像模拟)
+-P windows-latest=node:20
+-P windows-2022=node:20
+
+# macOS runners (使用Linux镜像模拟)
+-P macos-latest=node:20
+-P macos-12=node:20
+
+# 默认使用medium大小的runner
+--container-architecture linux/amd64
+
+# 不要拉取最新的镜像，使用缓存
+--pull=false
+
+# 启用详细日志
+--verbose

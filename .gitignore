@@ -1,0 +1,114 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package manager files (keep pnpm-lock.yaml for reproducible builds)
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+/lib/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output
+*.lcov
+test-output/
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Cache directories
+.npm
+.eslintcache
+.node_repl_history
+
+# Output of package managers
+*.tgz
+.yarn-integrity
+
+# Temporary folders
+tmp/
+temp/
+
+# Act local testing
+.github/.env.act
+
+# Application specific
+/.memory/
+
+# PromptX resources - selective ignore
+# Keep role definitions (public resources)
+!/.promptx/
+!/.promptx/resource/
+!/.promptx/resource/role/
+!/.promptx/resource/role/**/*.md
+!/.promptx/resource/thought/
+!/.promptx/resource/thought/**/*.md
+!/.promptx/resource/execution/
+!/.promptx/resource/execution/**/*.md
+!/.promptx/resource/knowledge/
+!/.promptx/resource/knowledge/**/*.md
+
+# Ignore private/runtime data
+/.promptx/memory/
+/.promptx/config/
+/.promptx/*.bin
+/.promptx/*.json
+/.promptx/*.log
+/.promptx/resource/project.registry.json
+
+/.idea/
+/.vscode/
+
+# Development
+*.orig
+.husky/_
+
+.kilocode/
+
+# act本地测试文件
+.env.act
+.secrets
+*.local
+
+# temp dir
+temp/
+tmp/
+.changeset/prerelease.lock
