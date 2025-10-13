@@ -34,8 +34,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
   final GlobalKey _phoneNumberFieldKey = GlobalKey();
   final FocusNode _phoneNumberFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-  final GlobalKey<State<Disappear>> _animatedButtonKey =
-      GlobalKey();
+  final GlobalKey<State<Disappear>> _animatedButtonKey = GlobalKey();
 
   // 状态管理变量
   String? _errorMessage;
@@ -602,4 +601,3 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
     );
   }
 }
-
