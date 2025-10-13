@@ -31,7 +31,7 @@ class Disappear extends StatefulWidget {
   State<Disappear> createState() => _AnimatedDisappearWidgetState();
 }
 
-class _AnimatedDisappearWidgetState extends State<sDisappear>
+class _AnimatedDisappearWidgetState extends State<Disappear>
     with SingleTickerProviderStateMixin {
   /// 动画控制器
   late final AnimationController _animationController;
