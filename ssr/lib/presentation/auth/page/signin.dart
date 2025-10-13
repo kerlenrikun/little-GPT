@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:ssr/common/__init__.dart';
-import 'package:ssr/core/config/__init__.dart';
-import 'package:ssr/domain/entity/auth/user.dart';
+import 'package:ssr/common/widget/appbar/app_bar.dart';
+import 'package:ssr/core/config/assets/app_images.dart';
+import 'package:ssr/core/config/assets/app_vector.dart';
+import 'package:ssr/core/config/theme/app_colors.dart';
+import 'package:ssr/data/config/feishu_config.dart';
+
+import 'package:ssr/domain/entity/user.dart';
+import 'package:ssr/domain/provider/user_provider.dart';
 import 'package:ssr/domain/repository/user_repository.dart';
-import 'package:ssr/presentation/home/widget/base_button.dart';
+
+import 'package:ssr/common/widget/button/basic_app_button.dart';
 import 'package:ssr/presentation/__init__.dart';
 import 'package:ssr/model/router.dart';
-import 'package:ssr/domain/provider/user_provider.dart';
+import 'package:ssr/presentation/auth/page/register.dart';
+
 import 'package:ssr/presentation/auth/util/storage_utils.dart';
 import 'package:ssr/common/util/string_util.dart';
 import 'package:ssr/common/animated/disappear.dart';
@@ -193,7 +200,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
 
           // 登录成功后导航到主页
           if (mounted) {
-            context.to(HomePage);
+            //context.to(HomePage);
           }
         }
       } else {
@@ -574,7 +581,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
               _rememberMeCheckbox(),
               const SizedBox(height: 6),
               // 登录按钮与动画 - 使用AnimatedDisappearWidget
-              AnimatedDisappearWidget(
+              Disappear(
                 key: _animatedButtonKey,
                 loadingWidget: const CircularProgressIndicator(
                   color: AppColors.primary,

@@ -28,10 +28,10 @@ class Disappear extends StatefulWidget {
   });
 
   @override
-  State<Disappear> createState() => _AnimatedDisappearWidgetState();
+  State<Disappear> createState() => _DisappearState();
 }
 
-class _AnimatedDisappearWidgetState extends State<Disappear>
+class _DisappearState extends State<Disappear>
     with SingleTickerProviderStateMixin {
   /// 动画控制器
   late final AnimationController _animationController;

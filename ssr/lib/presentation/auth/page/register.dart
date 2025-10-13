@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-
-import 'package:star_claude/model/router.dart';
-import 'package:star_claude/common/__init__.dart';
-import 'package:star_claude/presentation/page__init__.dart';
-import 'package:star_claude/core/configs/__init__.dart';
-
-import 'package:ssr/domain/entity/auth/user.dart';
-import 'package:ssr/domain/repository/user_repository.dart';
-import 'package:ssr/presentation/home/widget/base_button.dart';
+import 'package:ssr/common/widget/appbar/app_bar.dart';
+import 'package:ssr/core/config/assets/app_images.dart';
+import 'package:ssr/core/config/assets/app_vector.dart';
+import 'package:ssr/data/config/feishu_config.dart';
+import 'package:ssr/domain/entity/user.dart';
 import 'package:ssr/domain/provider/user_provider.dart';
+
+import 'package:ssr/model/router.dart';
+import 'package:ssr/presentation/__init__.dart';
+import 'package:ssr/core/config/theme/app_colors.dart';
+
+import 'package:ssr/domain/repository/user_repository.dart';
+import 'package:ssr/common/widget/button/basic_app_button.dart';
+import 'package:ssr/domain/provider/provider.dart';
 import 'package:ssr/common/animated/disappear.dart';
+import 'package:ssr/presentation/auth/page/signin.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -140,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
           _passwordController.clear();
 
           // 可以导航到登录页面或其他页面
-          context.to(HomePage);
+          //context.to(HomePage);
         }
       } else {
         // 重置动画
@@ -319,7 +324,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
 
-            AnimatedDisappearWidget(
+            Disappear(
               key: _animatedButtonKey,
               loadingWidget: const CircularProgressIndicator(
                 color: AppColors.primary,
