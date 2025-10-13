@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-import 'package:star_claude/models/router.dart';
+import 'package:star_claude/model/router.dart';
 import 'package:star_claude/common/__init__.dart';
 import 'package:star_claude/presentation/page__init__.dart';
 import 'package:star_claude/core/configs/__init__.dart';
 
-import 'package:star_claude/domain/entities/auth/user.dart';
-import 'package:star_claude/domain/repository/user_repository.dart';
-import 'package:star_claude/presentation/home/widgets/base_button.dart';
-import 'package:star_claude/domain/provider/user_provider.dart';
-import 'package:star_claude/presentation/auth/utils/animated_disappear_widget.dart';
+import 'package:ssr/domain/entity/auth/user.dart';
+import 'package:ssr/domain/repository/user_repository.dart';
+import 'package:ssr/presentation/home/widget/base_button.dart';
+import 'package:ssr/domain/provider/user_provider.dart';
+import 'package:ssr/common/animated/disappear.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -24,7 +24,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final GlobalKey<State<AnimatedDisappearWidget>> _animatedButtonKey = GlobalKey();
+  final GlobalKey<State<Disappear>> _animatedButtonKey = GlobalKey();
 
   String? _errorMessage;
   bool _isPasswordVisible = false; // 控制密码是否可见
