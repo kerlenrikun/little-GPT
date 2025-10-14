@@ -56,37 +56,8 @@ class UserEntity {
     );
   }
 
-  /// 转换为JSON字符串
-  String toJson() {
-    return jsonEncode({
-      'id': id,
-      'recordId': recordId,
-      'fullName': fullName,
-      'phoneNumber': phoneNumber,
-      'password': password,
-      'createdTime': createdTime.toIso8601String(),
-      'lastLoginTime': lastLoginTime.toIso8601String(),
-      'allowJob': jsonEncode(allowJob),
-    });
-  }
-
-  /// 从JSON字符串创建用户实体
-  factory UserEntity.fromJson(String jsonString) {
-    final map = jsonDecode(jsonString) as Map<String, dynamic>;
-    return UserEntity(
-      id: map['id'] as int?,
-      recordId: map['recordId'] as String?,
-      fullName: map['fullName'] as String? ?? '',
-      phoneNumber: map['phoneNumber'] as String? ?? '',
-      password: map['password'] as String? ?? '',
-      createdTime: DateTime.parse(map['createdTime'] as String? ?? DateTime.now().toIso8601String()),
-      lastLoginTime: DateTime.parse(map['lastLoginTime'] as String? ?? DateTime.now().toIso8601String()),
-      allowJob: _parseAllowJob(map['allowJob']),
-    );
-  }
-
   /// 从数据库Map转换为UserEntity
-  factory UserEntity.fromMap(Map<String, dynamic> map) {
+  factory UserEntity.fromLoMap(Map<String, dynamic> map) {
     return UserEntity(
       id: map['id'] as int?,
       recordId: map['record_id'] as String?,
@@ -100,7 +71,7 @@ class UserEntity {
   }
 
   /// 转换为数据库Map
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toLoMap() {
     return {
       'record_id': recordId,
       'full_name': fullName,
@@ -113,7 +84,7 @@ class UserEntity {
   }
 
   /// 从飞书Map转换为UserEntity
-  factory UserEntity.fromFeishuMap(Map<String, dynamic> map) {
+  factory UserEntity.fromClMap(Map<String, dynamic> map) {
     return UserEntity(
       recordId: map['record_id'] as String?,
       fullName: map['fields']['姓名'] as String? ?? '',
@@ -126,7 +97,7 @@ class UserEntity {
   }
 
   /// 转换为飞书Map
-  Map<String, dynamic> toFeishuMap() {
+  Map<String, dynamic> toClMap() {
     return {
       'id': id,
       'record_id': recordId,
@@ -134,8 +105,8 @@ class UserEntity {
       '姓名': fullName,
       '手机号': phoneNumber,
       '密码': password,
-      '注册时间': '${createdTime.year}-${createdTime.month.toString().padLeft(2, '0')}-${createdTime.day.toString().padLeft(2, '0')}',
-      '登录时间': '${lastLoginTime.year}-${lastLoginTime.month.toString().padLeft(2, '0')}-${lastLoginTime.day.toString().padLeft(2, '0')}',
+      '注册时间': createdTime.toIso8601String().split('T').first,
+      '登录时间': lastLoginTime.toIso8601String().split('T').first,
       ...allowJob,
     }
     };
@@ -152,12 +123,7 @@ class UserEntity {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is UserEntity &&
-        other.fullName == fullName &&
-        other.phoneNumber == phoneNumber &&
-        other.password == password &&
-        other.createdTime == createdTime &&
-        other.lastLoginTime == lastLoginTime &&
-        other.allowJob == allowJob;
+       other.toString() == toString();
   }
 
   /// 生成哈希码
@@ -169,8 +135,6 @@ class UserEntity {
   // 私有辅助方法：解析allowJob字段
   static Map<String, int> _parseAllowJob(dynamic feishuMap) {
     try {
-      // 检查输入是否为Map类型
-      if (feishuMap is Map) {
         return Map<String, int>.fromEntries(
           feishuMap.entries
               .where((entry) {
@@ -186,27 +150,7 @@ class UserEntity {
                     int.tryParse(entry.value.toString()) ?? 0,
                   ))
         );
-      } else if (feishuMap is String) {
-        // 如果输入是字符串，尝试解析为JSON
-        try {
-          final map = jsonDecode(feishuMap) as Map<String, dynamic>;
-          return Map<String, int>.fromEntries(
-            map.entries
-                .where((entry) {
-                  final value = int.tryParse(entry.value.toString());
-                  return value == 0 || value == 1;
-                })
-                .map((entry) => MapEntry(
-                      entry.key.toString(),
-                      int.tryParse(entry.value.toString()) ?? 0,
-                    ))
-          );
         } catch (_) {
-          // 解析失败，返回默认值
-        }
-      }
-    } catch (_) {
-      // 如果解析失败，返回默认值
     }
     return {'流量端':0,'承接端':0, '直销端':0, '转化端':0, '数据端':0};
   }

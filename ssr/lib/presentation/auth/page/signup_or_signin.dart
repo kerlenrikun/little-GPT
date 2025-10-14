@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import 'package:ssr/common/widget/appbar/app_bar.dart';
 import 'package:ssr/common/widget/button/basic_app_button.dart';
 
@@ -8,8 +7,6 @@ import 'package:ssr/core/config/assets/app_images.dart';
 import 'package:ssr/core/config/assets/app_vector.dart';
 import 'package:ssr/core/config/theme/__init__.dart';
 import 'package:ssr/model/router.dart';
-import 'package:ssr/presentation/__init__.dart';
-import 'package:ssr/domain/provider/provider.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 

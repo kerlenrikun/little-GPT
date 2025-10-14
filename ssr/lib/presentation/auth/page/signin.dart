@@ -7,17 +7,15 @@ import 'package:ssr/core/config/assets/app_vector.dart';
 import 'package:ssr/core/config/theme/app_colors.dart';
 import 'package:ssr/data/config/feishu_config.dart';
 
-import 'package:ssr/domain/entity/user.dart';
+
 import 'package:ssr/domain/provider/user_provider.dart';
 import 'package:ssr/domain/repository/user_repository.dart';
 
 import 'package:ssr/common/widget/button/basic_app_button.dart';
-import 'package:ssr/presentation/__init__.dart';
 import 'package:ssr/model/router.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
 
 import 'package:ssr/presentation/auth/util/storage_utils.dart';
-import 'package:ssr/common/util/string_util.dart';
 import 'package:ssr/common/animated/disappear.dart';
 
 class SigninPage extends StatefulWidget {
@@ -94,7 +92,6 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
   //------------------------------------------------------------------------------
   // 数据加载和存储方法
   //------------------------------------------------------------------------------
-  /// 加载登录历史记录
   Future<void> _loadLoginHistory() async {
     final history = await StorageUtils.getLoginHistory();
     setState(() {
@@ -102,7 +99,6 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
     });
   }
 
-  /// 加载上次登录的用户凭证
   Future<void> _loadLastLoginCredentials() async {
     final credentials = await StorageUtils.getLastLoginCredentials();
     if (credentials != null) {
@@ -117,7 +113,6 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
   //------------------------------------------------------------------------------
   // 业务逻辑处理方法
   //------------------------------------------------------------------------------
-  /// 处理用户登录逻辑
   Future<void> _handleLogin() async {
     if (!FeishuConfig.isConfigValid) {
       if (mounted) {
@@ -232,7 +227,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
   // UI交互控制方法
   //------------------------------------------------------------------------------
   /// 切换密码可见性
-  void _togglePasswordVisibility() {
+  void _passwordVisibility() {
     setState(() {
       _isPasswordVisible = !_isPasswordVisible;
     });
@@ -416,7 +411,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
                 _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 color: Colors.grey,
               ),
-              onPressed: _togglePasswordVisibility, // 点击切换密码可见性
+              onPressed: _passwordVisibility, // 点击切换密码可见性
             ),
           ),
         ),
@@ -425,7 +420,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
   }
 
   /// 记住我复选框
-  Widget _rememberMeCheckbox() {
+  Widget _rememberMe() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -577,7 +572,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
                 // 错误提示
                 _errorText(),
               // 记住我复选框
-              _rememberMeCheckbox(),
+              _rememberMe(),
               const SizedBox(height: 6),
               // 登录按钮与动画 - 使用AnimatedDisappearWidget
               Disappear(
