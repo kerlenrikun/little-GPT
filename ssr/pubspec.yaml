@@ -23,6 +23,10 @@ dependencies:
 
   cupertino_icons: ^1.0.8
 
+  #视频播放器组件
+  chewie: ^1.13.0
+  video_player: ^2.10.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
