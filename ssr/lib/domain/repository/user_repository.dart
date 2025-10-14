@@ -1,24 +1,33 @@
 import 'package:ssr/domain/entity/user.dart';
-import 'package:ssr/domain/repository/base_repository.dart';
+import 'package:ssr/domain/repository/repository.dart';
 
-class UserRepository extends BaseRepository<UserEntity> {
-  UserRepository() : super('users');
+class UserRepository extends Repository<UserEntity> {
+  UserRepository() : super('users','users');
 
   @override
-  UserEntity fromFeishuMap(Map<String, dynamic> map) {
-    return UserEntity.fromFeishuMap(map);
+  UserEntity fromClMap(Map<String, dynamic> map) {
+    return UserEntity.fromClMap(map);
   }
 
   @override
-  Map<String, dynamic> toFeishuMap(UserEntity entity) {
-    return entity.toFeishuMap();
+  Map<String, dynamic> toClMap(UserEntity entity) {
+    return entity.toClMap();
   }
-  // 当前用户信息同步
-  /// 用户信息
-  // 注册用户信息到飞书
+
+  @override
+  UserEntity fromLoMap(Map<String, dynamic> map) {
+    return UserEntity.fromLoMap(map);
+  }
+
+  @override
+  Map<String, dynamic> toLoMap(UserEntity entity) {
+    return entity.toLoMap();
+  }
+
+  // 注册用户信息到云端
   Future<Map<String, dynamic>> registerUser(UserEntity user) async {
     try {
-      final result = await addData(user);
+      final result = await add(user);
       
       if (result['success'] == true) {
         // 登入
@@ -51,9 +60,9 @@ class UserRepository extends BaseRepository<UserEntity> {
   }
   
   // 检查手机号是否已注册
-  Future<bool> isPhoneNumberRegistered(String phoneNumber) async {
+  Future<bool> isPhoneNumberExist(String phoneNumber) async {
     try {
-      final results = await queryData('CurrentValue.[手机号] = "$phoneNumber"');
+      final results = await query('CurrentValue.[手机号] = "$phoneNumber"');
       print('手机号存在: ${results.isNotEmpty}');
       return results.isNotEmpty;
     } catch (e) {
@@ -61,16 +70,14 @@ class UserRepository extends BaseRepository<UserEntity> {
     }
   }
   
-  // 获取所有用户
-  Future<List<UserEntity>> getAllUsers() async {
-    return getAllData();
-  }
-  
+   
+  // 获取所有用户直接调用父类的getAll
+
   // 用户登录
   Future<Map<String, dynamic>> loginUser(String phoneNumber, String password, String job) async {
     try {
       // 根据手机号查询用户
-      final results = await queryData('CurrentValue.[手机号] = "$phoneNumber"');
+      final results = await query('CurrentValue.[手机号] = "$phoneNumber"');
       
       // 检查用户是否存在
       if (results.isEmpty) {
@@ -113,7 +120,7 @@ class UserRepository extends BaseRepository<UserEntity> {
       
       // 更新用户岗位信息
       final updatedUser = user.copyWith(job: job);
-      await updateData(user.recordId!, updatedUser);
+      await update(user.recordId!, updatedUser);
       
       return {
         'success': true,
@@ -136,16 +143,10 @@ class UserRepository extends BaseRepository<UserEntity> {
       };
     }
   }
-  
-  // 根据ID获取用户
-  Future<UserEntity?> getUserById(String recordId) async {
-    final results = await getDataById(recordId);
-    return results;
-  }
 
   // 根据自定义过滤器查询成功数据记录
   /// 返回[UserEntity]对象列表
   Future<List<UserEntity>> queryUsers(String filter) async {
-    return queryData(filter);
+    return query(filter);
   }
 }

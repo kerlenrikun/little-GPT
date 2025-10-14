@@ -6,7 +6,6 @@ import 'package:ssr/domain/usecases/job_resources.dart';
 import 'package:ssr/presentation/auth/util/storage_utils.dart';
 
 /// 用户信息状态管理类
-/// 只提供必要的用户状态共享，具体数据操作由Repository负责
 class UserProvider extends ChangeNotifier {
   // 初始化用户实体
   UserEntity _currentUser = UserEntity(
@@ -20,24 +19,12 @@ class UserProvider extends ChangeNotifier {
 
   // 登录状态标志
   bool _isLoggedIn = false;
-  
-  // 加载状态
-  bool _isLoading = false;
-  
-  // 错误信息
-  String? _errorMessage;
 
   // 获取当前登录用户信息
   UserEntity get currentUser => _currentUser;
 
   // 检查用户是否已登录
   bool get isLoggedIn => _isLoggedIn;
-  
-  // 获取加载状态
-  bool get isLoading => _isLoading;
-  
-  // 获取错误信息
-  String? get errorMessage => _errorMessage;
 
   // 相关用户列表
   List<UserEntity> _usersList = [];
@@ -55,7 +42,6 @@ class UserProvider extends ChangeNotifier {
   void setUserAndLogin(UserEntity user) {
     _currentUser = user;
     _isLoggedIn = true;
-    _errorMessage = null;
     notifyListeners();
   }
 
@@ -101,17 +87,5 @@ class UserProvider extends ChangeNotifier {
       allowJob: {'流量端':0,'承接端':0, '直销端':0, '转化端':0, '数据端':0},
     );
     _isLoggedIn = false;
-  }
-  
-  // 设置加载状态
-  void setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
-  }
-  
-  // 设置错误信息
-  void setError(String? message) {
-    _errorMessage = message;
-    notifyListeners();
   }
 }

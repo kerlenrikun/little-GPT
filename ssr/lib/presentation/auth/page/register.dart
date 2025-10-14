@@ -9,12 +9,10 @@ import 'package:ssr/domain/entity/user.dart';
 import 'package:ssr/domain/provider/user_provider.dart';
 
 import 'package:ssr/model/router.dart';
-import 'package:ssr/presentation/__init__.dart';
 import 'package:ssr/core/config/theme/app_colors.dart';
 
 import 'package:ssr/domain/repository/user_repository.dart';
 import 'package:ssr/common/widget/button/basic_app_button.dart';
-import 'package:ssr/domain/provider/provider.dart';
 import 'package:ssr/common/animated/disappear.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 
@@ -51,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // 切换密码可见性
-  void _togglePasswordVisibility() {
+  void _passwordVisibility() {
     setState(() {
       _isPasswordVisible = !_isPasswordVisible;
     });
@@ -62,8 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _errorMessage = '飞书配置未完成，请先配置FeishuConfig.dart文件';
       });
-      return;
-    }
+      return;}
 
     final fullName = _fullNameController.text.trim();
     final phoneNumber = _phoneNumberController.text.trim();
@@ -88,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       // 检查手机号是否已注册
-      final isRegistered = await _userRepository.isPhoneNumberRegistered(
+      final isRegistered = await _userRepository.isPhoneNumberExist( //phoneNumberExist
         phoneNumber,
       );
       if (isRegistered) {
@@ -213,7 +210,7 @@ class _RegisterPageState extends State<RegisterPage> {
               _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
               color: Colors.grey,
             ),
-            onPressed: _togglePasswordVisibility, // 点击切换密码可见性
+            onPressed: _passwordVisibility, // 点击切换密码可见性
           ),
         ),
       ),

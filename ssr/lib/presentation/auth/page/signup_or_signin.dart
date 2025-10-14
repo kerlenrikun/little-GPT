@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import 'package:ssr/common/widget/appbar/app_bar.dart';
 import 'package:ssr/common/widget/button/basic_app_button.dart';
 
@@ -8,8 +7,6 @@ import 'package:ssr/core/config/assets/app_images.dart';
 import 'package:ssr/core/config/assets/app_vector.dart';
 import 'package:ssr/core/config/theme/__init__.dart';
 import 'package:ssr/model/router.dart';
-import 'package:ssr/presentation/__init__.dart';
-import 'package:ssr/domain/provider/provider.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 
@@ -25,7 +22,7 @@ class SignupOrSigninPage extends StatelessWidget {
           // 背景修饰
           Align(
             alignment: Alignment.topRight,
-            child: SvgPicture.asset(AppVectors.topPattern,),
+            child: SvgPicture.asset(AppVectors.topPattern),
           ),
           Align(
             alignment: Alignment.bottomRight,
@@ -43,7 +40,7 @@ class SignupOrSigninPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 178,),
+                  SizedBox(height: 178),
                   // logo
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +61,7 @@ class SignupOrSigninPage extends StatelessWidget {
                       color: AppColors.lightBackground,
                     ),
                   ),
-                  SizedBox(height: 24,),
+                  SizedBox(height: 24),
                   // 副标题
                   Text(
                     'This star is created for digitally empower connecting online to the group',
@@ -77,7 +74,7 @@ class SignupOrSigninPage extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 45,),
+                  SizedBox(height: 45),
                   Row(
                     children: [
                       // 注册
@@ -90,24 +87,28 @@ class SignupOrSigninPage extends StatelessWidget {
                           letterspacing: 1,
                           color: Colors.white,
                           onPressed: () => context.to(RegisterPage),
-                          )
+                        ),
                       ),
-                      SizedBox(width: 20,),
+                      SizedBox(width: 20),
                       //登录
                       Expanded(
                         flex: 1,
                         child: TextButton(
-                          onPressed: () { context.to(SigninPage);},
-                          child: Text('Sign in',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),),
-                          )
+                          onPressed: () {
+                            context.to(SigninPage);
+                          },
+                          child: Text(
+                            'Sign in',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

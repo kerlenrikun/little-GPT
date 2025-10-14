@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:ssr/data/config/feishu_config.dart';
+/// 云端数据到db的基本api
+/// 云端数据到前端的基本api
 
-class FeishuApiService {
+class CloudApiService {
   // 使用配置中的基础API URL
   static const String _baseUrl = FeishuConfig.baseApiUrl;
   static const String _bitableBaseUrl = '$_baseUrl/bitable/v1';
@@ -16,7 +18,7 @@ class FeishuApiService {
   DateTime? _tokenExpiry;
   
   // 构造函数
-  FeishuApiService({this.tableKey = 'users'});
+  CloudApiService({this.tableKey = 'users'});
   
   // 从表标识获取appToken
   String get _appToken {
