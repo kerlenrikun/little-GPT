@@ -34,6 +34,13 @@ class _VideoViewState extends State<VideoView> {
     initializePlayer();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _videoPlayerController.dispose();
+    _chewieController?.dispose();
+  }
+
   Future<void> initializePlayer() async {
     _videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(widget.videoUrl),
@@ -59,13 +66,6 @@ class _VideoViewState extends State<VideoView> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _videoPlayerController.dispose();
-    _chewieController?.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = screenWidth / widget.aspectRatio;
@@ -74,7 +74,7 @@ class _VideoViewState extends State<VideoView> {
       children: [
         Column(
           children: [
-            SafeArea(child: SizedBox(height: 1)),
+            SafeArea(top: false, child: SizedBox(height: 0)),
             Container(
               width: screenWidth,
               height: screenHeight,

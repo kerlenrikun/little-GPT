@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ssr/model/router.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
-import 'package:ssr/presentation/auth/page/video_page/play_video.dart';
+import 'package:ssr/presentation/video_page/video_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ssr/presentation/auth/page/video_page/video_view.dart';
+import 'package:ssr/presentation/video_page/widget/tabbar_widget.dart';
+import 'package:ssr/presentation/video_page/widget/video_view.dart';
 
 class PlayVideo extends StatefulWidget {
   const PlayVideo({super.key});
@@ -14,17 +15,17 @@ class _PlayVideoState extends State<PlayVideo> {
     return Container(
       color: Colors.white,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           // AppBar(title: Text('播放视频')),
           Container(
             color: Colors.black,
             child: VideoView(
-              videoUrl:
-                  'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-              coverUrl:
-                  'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.jpg',
+              videoUrl: 'https://rmtt.top/projectDoc/testMp4XX.mp4',
+              coverUrl: 'https://rmtt.top/projectDoc/testPngXX.png',
             ),
           ),
+          Expanded(child: Container(child: VideoContact())),
         ],
       ),
     );
