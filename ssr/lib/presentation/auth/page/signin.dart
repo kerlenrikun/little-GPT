@@ -7,7 +7,6 @@ import 'package:ssr/core/config/assets/app_vector.dart';
 import 'package:ssr/core/config/theme/app_colors.dart';
 import 'package:ssr/data/config/feishu_config.dart';
 
-
 import 'package:ssr/domain/provider/user_provider.dart';
 import 'package:ssr/domain/repository/user_repository.dart';
 
@@ -149,7 +148,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
       final result = await _userRepository.loginUser(
         phoneNumber,
         password,
-        userProvider.currentUser.job ?? '',
+        userProvider.currentUser.job ?? '数据端',
       );
 
       if (mounted) {
@@ -222,7 +221,6 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
       }
     }
   }
-
   //------------------------------------------------------------------------------
   // UI交互控制方法
   //------------------------------------------------------------------------------
@@ -534,64 +532,77 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: _registerText(context),
-      appBar: BasicAppBar(
-        title: Transform.scale(
-          scale: 0.58,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(AppImages.logo),
-              SizedBox(width: 15),
-              SvgPicture.asset(AppVectors.logo),
-            ],
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsetsGeometry.only(
-          top: 80,
-          bottom: 50,
-          left: 30,
-          right: 30,
-        ),
-        child: FadeTransition(
-          opacity: AlwaysStoppedAnimation(_loginFormOpacity),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _loginText(),
-              const SizedBox(height: 12),
-              _helpText(context),
-              const SizedBox(height: 28),
-              _phoneNumberField(context),
-              const SizedBox(height: 16),
-              _passwordField(context),
-              const SizedBox(height: 20),
-              if (_errorMessage != null)
-                // 错误提示
-                _errorText(),
-              // 记住我复选框
-              _rememberMe(),
-              const SizedBox(height: 6),
-              // 登录按钮与动画 - 使用AnimatedDisappearWidget
-              Disappear(
-                key: _animatedButtonKey,
-                loadingWidget: const CircularProgressIndicator(
-                  color: AppColors.primary,
-                  strokeWidth: 5,
-                ),
-                child: BasicAppButton(
-                  onPressed: _onLoginButtonPressed,
-                  title: 'Sign In',
-                  letterspacing: 1,
-                  fontsize: 17,
-                  width: 279 + 30,
-                ),
+      body: Stack(
+        children: [
+          BasicAppBar(
+            title: Transform.scale(
+              scale: 0.58,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Image.asset(AppImages.logo),
+                  SizedBox(width: 15),
+                  SvgPicture.asset(AppVectors.logo),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          // 背景修饰
+          Align(
+            alignment: Alignment.topRight,
+            child: SvgPicture.asset(AppVectors.topPattern),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: SvgPicture.asset(AppVectors.bottomPattern),
+          ),
+          Padding(
+            padding: EdgeInsetsGeometry.only(top: 120,left: 30,right: 30,),
+            child: FadeTransition(
+              opacity: AlwaysStoppedAnimation(_loginFormOpacity),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _loginText(),
+                      const SizedBox(height: 12),
+                      _helpText(context),
+                      const SizedBox(height: 28),
+                      _phoneNumberField(context),
+                      const SizedBox(height: 16),
+                      _passwordField(context),
+                      const SizedBox(height: 20),
+                      if (_errorMessage != null)
+                        // 错误提示
+                        _errorText(),
+                      // 记住我复选框
+                      _rememberMe(),
+                      const SizedBox(height: 6),
+                      // 登录按钮与动画 - 使用AnimatedDisappearWidget
+                      Disappear(
+                        key: _animatedButtonKey,
+                        loadingWidget: const CircularProgressIndicator(
+                          color: AppColors.primary,
+                          strokeWidth: 5,
+                        ),
+                        child: BasicAppButton(
+                          onPressed: _onLoginButtonPressed,
+                          title: 'Sign In',
+                          letterspacing: 1,
+                          fontsize: 17,
+                          width: 279 + 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                  _registerText(context),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

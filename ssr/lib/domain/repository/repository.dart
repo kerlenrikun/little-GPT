@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:ssr/data/resource/cloude/cloude_api_service.dart';
-import 'package:ssr/data/resource/local/database_manager.dart';
+import 'package:ssr/data/service/cloude/cloude_api_service.dart';
+import 'package:ssr/data/service/local/database_manager.dart';
 
 /// T: 实体类型，必须实现fromMap和toMap方法
 abstract class Repository<T> {

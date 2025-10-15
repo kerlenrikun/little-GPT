@@ -23,14 +23,22 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMixin {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<State<Disappear>> _animatedButtonKey = GlobalKey();
+  final GlobalKey _fullNameFieldKey = GlobalKey();
+  final GlobalKey _phoneNumberFieldKey = GlobalKey();
+  final FocusNode _fullNameFocusNode = FocusNode();
+  final FocusNode _phoneNumberFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   String? _errorMessage;
   bool _isPasswordVisible = false; // 控制密码是否可见
+  double _fullNameFieldOffset = 0.0;
+  double _phoneNumberFieldOffset = 0.0;
+  double _passwordFieldOffset = 0.0;
 
   late UserRepository _userRepository;
 
@@ -38,6 +46,25 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     _userRepository = UserRepository();
+
+    // 添加焦点监听器
+    _fullNameFocusNode.addListener(() {
+      setState(() {
+        _fullNameFieldOffset = _fullNameFocusNode.hasFocus ? -5.0 : 0.0;
+      });
+    });
+
+    _phoneNumberFocusNode.addListener(() {
+      setState(() {
+        _phoneNumberFieldOffset = _phoneNumberFocusNode.hasFocus ? -5.0 : 0.0;
+      });
+    });
+
+    _passwordFocusNode.addListener(() {
+      setState(() {
+        _passwordFieldOffset = _passwordFocusNode.hasFocus ? -5.0 : 0.0;
+      });
+    });
   }
 
   @override
@@ -45,6 +72,9 @@ class _RegisterPageState extends State<RegisterPage> {
     _fullNameController.dispose();
     _phoneNumberController.dispose();
     _passwordController.dispose();
+    _fullNameFocusNode.dispose();
+    _phoneNumberFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -60,7 +90,8 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _errorMessage = '飞书配置未完成，请先配置FeishuConfig.dart文件';
       });
-      return;}
+      return;
+    }
 
     final fullName = _fullNameController.text.trim();
     final phoneNumber = _phoneNumberController.text.trim();
@@ -85,7 +116,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       // 检查手机号是否已注册
-      final isRegistered = await _userRepository.isPhoneNumberExist( //phoneNumberExist
+      final isRegistered = await _userRepository.isPhoneNumberExist(
+        //phoneNumberExist
         phoneNumber,
       );
       if (isRegistered) {
@@ -103,14 +135,16 @@ class _RegisterPageState extends State<RegisterPage> {
       // 更新用户模型
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       // 创建当前用户实体
-          UserEntity userEntity = UserEntity(
-            fullName: fullName,
-            phoneNumber: phoneNumber,
-            password: password,
-            job: userProvider.currentUser.job,
-            allowJob: userProvider.currentUser.job != null ? {userProvider.currentUser.job!: 1,} : {},
-          );
-      
+      UserEntity userEntity = UserEntity(
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        password: password,
+        job: userProvider.currentUser.job,
+        allowJob: userProvider.currentUser.job != null
+            ? {userProvider.currentUser.job!: 1}
+            : {},
+      );
+
       // 注册用户
       final result = await _userRepository.registerUser(userEntity);
 
@@ -175,42 +209,59 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget _fullNameField(BuildContext context) {
-    return TextField(
-      controller: _fullNameController,
-      decoration: const InputDecoration(
-        hintText: 'Full Name',
-        border: OutlineInputBorder(),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      transform: Matrix4.translationValues(0, _fullNameFieldOffset, 0),
+      child: TextField(
+        key: _fullNameFieldKey,
+        controller: _fullNameController,
+        focusNode: _fullNameFocusNode,
+        decoration: const InputDecoration(
+          hintText: 'Full Name',
+          border: OutlineInputBorder(),
+        ),
       ),
     );
   }
 
   Widget _phoneNumberField(BuildContext context) {
-    return TextField(
-      controller: _phoneNumberController,
-      keyboardType: TextInputType.phone,
-      decoration: const InputDecoration(
-        hintText: 'Phone Number',
-        border: OutlineInputBorder(),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      transform: Matrix4.translationValues(0, _phoneNumberFieldOffset, 0),
+      child: TextField(
+        key: _phoneNumberFieldKey,
+        controller: _phoneNumberController,
+        focusNode: _phoneNumberFocusNode,
+        keyboardType: TextInputType.phone,
+        decoration: const InputDecoration(
+          hintText: 'Phone Number',
+          border: OutlineInputBorder(),
+        ),
       ),
     );
   }
 
   Widget _passwordField(BuildContext context) {
-    return TextField(
-      controller: _passwordController,
-      obscureText: !_isPasswordVisible, // 根据_isPasswordVisible控制是否显示密码
-      decoration: InputDecoration(
-        hintText: 'Password',
-        border: const OutlineInputBorder(),
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 12.0),
-          child: IconButton(
-            icon: Icon(
-              // 根据密码可见性状态显示不同图标
-              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Colors.grey,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      transform: Matrix4.translationValues(0, _passwordFieldOffset, 0),
+      child: TextField(
+        controller: _passwordController,
+        focusNode: _passwordFocusNode,
+        obscureText: !_isPasswordVisible, // 根据_isPasswordVisible控制是否显示密码
+        decoration: InputDecoration(
+          hintText: 'Password',
+          border: const OutlineInputBorder(),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: IconButton(
+              icon: Icon(
+                // 根据密码可见性状态显示不同图标
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Colors.grey,
+              ),
+              onPressed: _passwordVisibility, // 点击切换密码可见性
             ),
-            onPressed: _passwordVisibility, // 点击切换密码可见性
           ),
         ),
       ),
@@ -269,74 +320,98 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: _signText(context),
-      appBar: BasicAppBar(
-        // 传入 logo
-        title: Transform.scale(
-          scale: 0.58,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(AppImages.logo),
-              SizedBox(width: 15),
-              SvgPicture.asset(AppVectors.logo),
-            ],
+      body: Stack(
+        children: [
+          BasicAppBar(
+            // 传入 logo
+            title: Transform.scale(
+              scale: 0.58,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Image.asset(AppImages.logo),
+                  SizedBox(width: 15),
+                  SvgPicture.asset(AppVectors.logo),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsetsGeometry.symmetric(vertical: 50, horizontal: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _registerText(),
-            const SizedBox(height: 15),
-            _helpText(context),
-            const SizedBox(height: 26),
-            _fullNameField(context),
-            const SizedBox(height: 16),
-            _phoneNumberField(context),
-            const SizedBox(height: 16),
-            _passwordField(context),
-            const SizedBox(height: 20),
-            if (_errorMessage != null)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 4,
-                  horizontal: 16,
-                ),
-                child: Row(
+          // 背景修饰
+          Align(
+            alignment: Alignment.topRight,
+            child: SvgPicture.asset(AppVectors.topPattern),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: SvgPicture.asset(AppVectors.bottomPattern),
+          ),
+          Padding(
+            padding: EdgeInsetsGeometry.only(top: 120, left: 30, right: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, color: Colors.red[400], size: 18),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        _errorMessage!,
-                        style: const TextStyle(color: Colors.red, fontSize: 14),
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.visible,
+                    _registerText(),
+                    const SizedBox(height: 15),
+                    _helpText(context),
+                    const SizedBox(height: 26),
+                    _fullNameField(context),
+                    const SizedBox(height: 16),
+                    _phoneNumberField(context),
+                    const SizedBox(height: 16),
+                    _passwordField(context),
+                    const SizedBox(height: 20),
+                    if (_errorMessage != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 4,
+                          horizontal: 16,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.red[400],
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                _errorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.visible,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    Disappear(
+                      key: _animatedButtonKey,
+                      loadingWidget: const CircularProgressIndicator(
+                        color: AppColors.primary,
+                        strokeWidth: 5,
+                      ),
+                      child: BasicAppButton(
+                        onPressed: _handleSignup,
+                        title: 'Create Account',
+                        letterspacing: 1,
+                        fontsize: 17,
+                        width: 279 + 30,
                       ),
                     ),
                   ],
                 ),
-              ),
-
-            Disappear(
-              key: _animatedButtonKey,
-              loadingWidget: const CircularProgressIndicator(
-                color: AppColors.primary,
-                strokeWidth: 5,
-              ),
-              child: BasicAppButton(
-                onPressed: _handleSignup,
-                title: 'Create Account',
-                letterspacing: 1,
-                fontsize: 17,
-                width: 279 + 30,
-              ),
+                _signText(context)
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
