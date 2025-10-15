@@ -7,8 +7,8 @@ import 'package:ssr/core/config/assets/app_images.dart';
 import 'package:ssr/core/config/assets/app_vector.dart';
 import 'package:ssr/core/config/theme/__init__.dart';
 import 'package:ssr/model/router.dart';
-import 'package:ssr/presentation/auth/page/register.dart';
-import 'package:ssr/presentation/auth/page/signin.dart';
+import 'package:ssr/presentation/auth/register.dart';
+import 'package:ssr/presentation/auth/signin.dart';
 
 class SignupOrSigninPage extends StatelessWidget {
   const SignupOrSigninPage({super.key});
