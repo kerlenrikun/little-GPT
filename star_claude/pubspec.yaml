@@ -1,0 +1,74 @@
+name: star_claude
+description: "A new Flutter project."
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  google_nav_bar: ^5.0.7
+  provider: ^6.1.2
+  intl: ^0.20.2
+  flutter_svg: ^2.0.10+1
+  flutter_slidable: ^3.0.0
+  
+  # HTTP请求和JSON处理
+  http: ^1.2.2
+  dio: ^5.4.2
+  
+  # 本地存储
+  shared_preferences: ^2.2.3
+  # 数据库
+  sqflite: ^2.3.0
+  path: ^1.9.0
+  # 支持在Windows等平台上运行数据库
+  # sqflite_common_ffi: ^2.3.0
+  
+  # 日历组件
+  table_calendar: ^3.0.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - assets/fonts/
+    - assets/vectors/
+  #   - images/a_dot_ham.jpeg
+
+
+  # example:
+  fonts:
+    - family: Satoshi
+      fonts:
+        - asset: assets/fonts/Satoshi-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Satoshi-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/Satoshi-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Satoshi-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Satoshi-Light.ttf
+          weight: 300
+          # style: italic
+          # weight: 700
+          # 当前位置: 2h4min
+          # 文字部分: 16min
