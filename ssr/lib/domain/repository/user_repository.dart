@@ -62,7 +62,8 @@ class UserRepository extends Repository<UserEntity> {
   // 检查手机号是否已注册
   Future<bool> isPhoneNumberExist(String phoneNumber) async {
     try {
-      final results = await query('CurrentValue.[手机号] = "$phoneNumber"');
+      // 使用本地数据库查询
+      final results = await queryLo('phone_number = ?', [phoneNumber]);
       print('手机号存在: ${results.isNotEmpty}');
       return results.isNotEmpty;
     } catch (e) {
@@ -73,11 +74,11 @@ class UserRepository extends Repository<UserEntity> {
    
   // 获取所有用户直接调用父类的getAll
 
-  // 用户登录
+  // 用户登录 - 修改为使用本地数据库
   Future<Map<String, dynamic>> loginUser(String phoneNumber, String password, String job) async {
     try {
-      // 根据手机号查询用户
-      final results = await query('CurrentValue.[手机号] = "$phoneNumber"');
+      // 使用本地数据库根据手机号查询用户
+      final results = await queryLo('phone_number = ?', [phoneNumber]);
       
       // 检查用户是否存在
       if (results.isEmpty) {
@@ -109,23 +110,27 @@ class UserRepository extends Repository<UserEntity> {
         };
       }
       
-      // 检查recordId是否为空
-      if (user.recordId == null) {
+      // 更新用户最后登录时间
+      final updatedUser = user.copyWith(
+        job: job,
+        lastLoginTime: DateTime.now(),
+      );
+      
+      // 更新本地数据库中的用户信息
+      if (user.id != null) {
+        await updateLo(user.id!, updatedUser);
+      } else {
         return {
           'success': false,
-          'message': '用户记录ID为空，无法更新岗位信息',
-          'error': '记录ID为空',
+          'message': '用户ID为空，无法更新',
+          'error': '用户记录ID为空',
         };
       }
-      
-      // 更新用户岗位信息
-      final updatedUser = user.copyWith(job: job);
-      await update(user.recordId!, updatedUser);
       
       return {
         'success': true,
         'message': '登录成功',
-        'entity':updatedUser,
+        'entity': updatedUser,
         'data': {
           'fullName': user.fullName,
           'phoneNumber': user.phoneNumber,
