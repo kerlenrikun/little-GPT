@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ssr/model/router.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
+import 'package:ssr/presentation/sound_page/sound_page.dart';
 import 'package:ssr/presentation/video_page/video_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -66,6 +67,11 @@ class _HomePageState extends State<HomePage> {
                           NavigatorButtom(
                             page: PlayVideo(),
                             buttonText: '跳转到播放视频页面',
+                          ),
+                          SizedBox(height: 20),
+                          NavigatorButtom(
+                            page: SoundPage(),
+                            buttonText: '跳转到听音频页面',
                           ),
                         ],
                       ),

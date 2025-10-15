@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ssr/presentation/home_page/home_page.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
+import 'package:ssr/presentation/sound_page/sound_page.dart';
 import 'package:ssr/presentation/video_page/video_page.dart';
 
 void main() {
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
           SigninPage: (context) => const SigninPage(),
           RegisterPage: (context) => const RegisterPage(),
           PlayVideo: (context) => const PlayVideo(),
+          SoundPage: (context) => const SoundPage(),
         }),
       },
       home: HomePage(),
