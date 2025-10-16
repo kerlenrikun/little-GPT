@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -48,38 +49,62 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
   }
 
   /// 检查缓存 → 若存在用本地文件播放，否则边播边缓存
+  /// 加载并播放音频（带分段缓存 + 断点续传 + 自动清理）
   Future<void> _loadAudio() async {
-    final cacheManager = AudioCacheManager(dio: Dio());
+    final dio = Dio();
+    final cacheManager = AudioCacheManager();
+
+    // 初始化缓存系统
     await cacheManager.init();
 
-    final cached = await cacheManager.getCachedFile(widget.audioUrl);
+    // 每次加载时执行一次清理任务（清理两天前未访问缓存）
+    await AudioCacheManager.scheduledCleanup();
 
-    if (cached != null && await cached.exists()) {
-      print("📦 本地缓存命中，直接播放: ${cached.path}");
-      _cachePath = cached.path;
-      await _playFrom(Uri.file(cached.path));
-    } else {
-      print("🌐 缓存缺失，启动分段下载");
-      _isCaching = true;
+    final url = widget.audioUrl;
+    final cachedFile = await cacheManager.getCachedFile(url);
+
+    // ① 若命中缓存文件 → 直接本地播放
+    if (cachedFile != null && await cachedFile.exists()) {
+      print("📦 本地缓存命中，直接播放: ${cachedFile.path}");
+      _cachePath = cachedFile.path;
+
+      // 更新最后访问时间
+      await cacheManager.updateAccessTime(url);
+
+      await _playFrom(Uri.file(cachedFile.path));
+      return;
+    }
+
+    // ② 若缓存缺失 → 启动分段断点续传下载
+    print("🌐 缓存缺失，启动分段缓存 + 边播边下载");
+    _isCaching = true;
+
+    // 启动分段缓存任务（支持断点续传）
+    unawaited(
       cacheManager
-          .download(
-            widget.audioUrl,
+          .cacheAudio(
+            url,
             onProgress: (progress) {
-              setState(() => _downloadProgress = progress);
+              if (mounted) {
+                setState(() => _downloadProgress = progress);
+              }
             },
           )
           .then((_) async {
             _isCaching = false;
-            final completed = await cacheManager.getCachedFile(widget.audioUrl);
-            if (completed != null) {
-              print("✅ 分段缓存完成，切换至本地播放");
-              await _playFrom(Uri.file(completed.path));
-            }
-          });
 
-      // 同时边播边下载
-      await _playFrom(Uri.parse(widget.audioUrl));
-    }
+            // 下载完成后获取缓存文件
+            final completedFile = await cacheManager.getCachedFile(url);
+            if (completedFile != null && await completedFile.exists()) {
+              print("✅ 分段缓存完成，切换至本地播放");
+              _cachePath = completedFile.path;
+              await _playFrom(Uri.file(completedFile.path));
+            }
+          }),
+    );
+
+    // ③ 边播边缓存（播放网络流）
+    await _playFrom(Uri.parse(url));
   }
 
   /// 播放音频
@@ -281,11 +306,10 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
       icon: _player.playing
           ? const Icon(Icons.pause_circle_filled, color: Colors.blue)
           : const Icon(Icons.play_circle_fill, color: Colors.blue),
-      onPressed: _isCaching
-          ? null
-          : () async {
-              _player.playing ? await _player.pause() : await _player.play();
-            },
+      // 🔹 删除了 `_isCaching ? null :` 限制，让播放键始终可用
+      onPressed: () async {
+        _player.playing ? await _player.pause() : await _player.play();
+      },
     );
   }
 
@@ -311,14 +335,14 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
             _buildProgress(),
             const SizedBox(height: 8),
             _buildPlayButton(),
-            if (_isCaching) ...[
-              const SizedBox(height: 10),
-              LinearProgressIndicator(value: _downloadProgress),
-              Text(
-                "正在缓存 ${(_downloadProgress * 100).toStringAsFixed(1)}%",
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
+            // if (_isCaching) ...[
+            //   const SizedBox(height: 10),
+            //   LinearProgressIndicator(value: _downloadProgress),
+            //   Text(
+            //     "正在缓存 ${(_downloadProgress * 100).toStringAsFixed(1)}%",
+            //     style: const TextStyle(fontSize: 12, color: Colors.grey),
+            //   ),
+            // ],
           ],
         ),
       ),
