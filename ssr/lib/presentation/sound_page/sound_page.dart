@@ -83,7 +83,7 @@ class _SoundPageState extends State<SoundPage> {
                 SizedBox(height: 4),
                 Divider(height: 16, color: Color(0xff815B0B)),
                 SizedBox(height: 16),
-                AudioPlayProvider(advancedPlayer: advancedPlayer),
+                AudioPlayerWidget(advancedPlayer: advancedPlayer),
               ],
             ),
           ),
