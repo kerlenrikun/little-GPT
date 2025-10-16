@@ -304,8 +304,8 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
     return IconButton(
       iconSize: 52,
       icon: _player.playing
-          ? const Icon(Icons.pause_circle_filled, color: Colors.blue)
-          : const Icon(Icons.play_circle_fill, color: Colors.blue),
+          ? const Icon(Icons.pause, color: Color(0xffb0b0b0))
+          : const Icon(Icons.play_arrow_outlined, color: Color(0xffb0b0b0)),
       // 🔹 删除了 `_isCaching ? null :` 限制，让播放键始终可用
       onPressed: () async {
         _player.playing ? await _player.pause() : await _player.play();
