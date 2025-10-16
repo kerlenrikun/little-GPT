@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                               listName: '播单系列名字',
                               title: '[标题]这是一个师父的录音',
                               soundFileUrl:
-                                  'https://rmtt.top/projectDoc/testMp3.mp3',
+                                  'https://rmtt.top/projectDoc/testLongMp3.mp3',
                               coverUrl:
                                   'https://rmtt.top/projectDoc/testJpg.jpg',
                             ),

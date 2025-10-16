@@ -30,6 +30,12 @@ dependencies:
   #音频播放服务
   audio_service: ^0.18.18
   audioplayers: ^6.5.1
+  just_audio: ^0.10.5
+  just_audio_background: ^0.0.1-beta.17
+  audio_session: ^0.1.17
+
+  #断点续播
+  path_provider: ^2.1.3
 
 
   #网络图片缓存

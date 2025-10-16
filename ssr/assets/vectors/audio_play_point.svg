@@ -1,0 +1,84 @@
+<svg viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="26.000000" height="26.000000" fill="none">
+	<defs>
+		<g id="pixso_custom_effect_0">
+			<effect x="0.000000" y="0.000000" visibility="visible" fill="rgb(242,184,51)" fill-opacity="1" effectType="dropShadow" stdDeviation="3" radius="0" />
+		</g>
+		<filter id="filter_0" width="24.834213" height="24.834229" x="0.582886" y="0.582855" filterUnits="userSpaceOnUse" customEffect="url(#pixso_custom_effect_0)" color-interpolation-filters="sRGB">
+			<feFlood flood-opacity="0" result="BackgroundImageFix" />
+			<feOffset dx="0.000000" dy="0.000000" in="SourceAlpha" />
+			<feGaussianBlur stdDeviation="1" />
+			<feColorMatrix type="matrix" values="0 0 0 0 0.94902 0 0 0 0 0.721569 0 0 0 0 0.2 0 0 0 1 0 " />
+			<feBlend result="effect_dropShadow_1" in2="BackgroundImageFix" mode="normal" />
+			<feBlend result="shape" in="SourceGraphic" in2="effect_dropShadow_1" mode="normal" />
+		</filter>
+		<linearGradient id="paint_linear_0" x1="13" x2="13" y1="9.5333252" y2="16.4666595" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(246,222,10)" offset="0" stop-opacity="0.899999976" />
+			<stop stop-color="rgb(249,239,90)" offset="0.52320677" stop-opacity="0.689999998" />
+			<stop stop-color="rgb(255,235,59)" offset="0.987341762" stop-opacity="0.899999976" />
+		</linearGradient>
+		<linearGradient id="paint_linear_1" x1="9.53333378" x2="16.4666672" y1="12.9999924" y2="12.9999924" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(255,234,54)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(234,222,55)" offset="0.5" stop-opacity="0.800000012" />
+			<stop stop-color="rgb(255,237,8)" offset="1" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="paint_linear_2" x1="3.46666622" x2="3.46666622" y1="0" y2="6.93333244" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(246,222,10)" offset="0" stop-opacity="0.899999976" />
+			<stop stop-color="rgb(249,239,90)" offset="0.52320677" stop-opacity="0.689999998" />
+			<stop stop-color="rgb(255,235,59)" offset="0.987341762" stop-opacity="0.899999976" />
+		</linearGradient>
+		<linearGradient id="paint_linear_3" x1="5.51011794e-07" x2="6.93333197" y1="3.46666574" y2="3.46666574" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(255,234,54)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(234,222,55)" offset="0.5" stop-opacity="0.800000012" />
+			<stop stop-color="rgb(255,237,8)" offset="1" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="paint_linear_4" x1="13.0000019" x2="13.0000019" y1="10.4000244" y2="15.6000242" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(246,222,10)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(234,222,55)" offset="0.489451468" stop-opacity="0.75" />
+			<stop stop-color="rgb(255,235,59)" offset="0.987341762" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="paint_linear_5" x1="10.4000015" x2="15.6000013" y1="13.0000238" y2="13.0000238" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(230,204,37)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(234,222,55)" offset="0.5" stop-opacity="0.899999976" />
+			<stop stop-color="rgb(255,230,8)" offset="1" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="paint_linear_6" x1="2.5999999" x2="2.5999999" y1="0" y2="5.19999981" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(246,222,10)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(234,222,55)" offset="0.489451468" stop-opacity="0.75" />
+			<stop stop-color="rgb(255,235,59)" offset="0.987341762" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="paint_linear_7" x1="4.13258874e-07" x2="5.19999981" y1="2.59999967" y2="2.59999967" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(230,204,37)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(234,222,55)" offset="0.5" stop-opacity="0.899999976" />
+			<stop stop-color="rgb(255,230,8)" offset="1" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="paint_linear_8" x1="13.2802458" x2="13.0434256" y1="11.4629087" y2="15.4510078" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(33,111,255)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(255,0,0)" offset="1" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="paint_linear_9" x1="1.14617479" x2="0.90935421" y1="-0.670391798" y2="3.31770754" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(33,111,255)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(255,0,0)" offset="1" stop-opacity="1" />
+		</linearGradient>
+	</defs>
+	<rect id="播放" width="26.000000" height="26.000000" x="0.000000" y="0.000000" fill="rgb(191.25,191.25,191.25)" fill-opacity="0" />
+	<path id="Vector" d="M16.875 16.8749C12.5949 21.1551 7.39024 22.89 5.25015 20.7499C3.11007 18.6098 4.84495 13.4051 9.12512 9.12494C13.4053 4.84476 18.6099 3.10988 20.75 5.24997C22.8901 7.39006 21.1552 12.5947 16.875 16.8749ZM9.12495 16.875C13.4051 21.1552 18.6098 22.8901 20.7498 20.75C22.8899 18.6099 21.155 13.4052 16.8749 9.12506C12.5947 4.84489 7.39006 3.11 5.24998 5.25009C3.1099 7.39018 4.84478 12.5948 9.12495 16.875Z" opacity="0" stroke="rgb(242,184,51)" stroke-width="1.5" />
+	<g filter="url(#filter_0)">
+		<path id="Vector" d="M16.875 16.8749C12.5949 21.1551 7.39024 22.89 5.25015 20.7499C3.11007 18.6098 4.84495 13.4051 9.12512 9.12494C13.4053 4.84476 18.6099 3.10988 20.75 5.24997C22.8901 7.39006 21.1552 12.5947 16.875 16.8749ZM9.12495 16.875C13.4051 21.1552 18.6098 22.8901 20.7498 20.75C22.8899 18.6099 21.155 13.4052 16.8749 9.12506C12.5947 4.84489 7.39006 3.11 5.24998 5.25009C3.1099 7.39018 4.84478 12.5948 9.12495 16.875Z" stroke="rgb(2,64,147)" stroke-width="1.5" />
+	</g>
+	<g id="大内心">
+		<path id="Star 7" d="M14.0505 11.9424C14.78 12.6669 16.4667 12.9883 16.4667 12.9883C16.4667 12.9883 14.7822 13.321 14.0576 14.0505C13.333 14.78 13.0117 16.4667 13.0117 16.4667C13.0117 16.4667 12.679 14.7822 11.9495 14.0576C11.22 13.333 9.53333 13.0117 9.53333 13.0117C9.53333 13.0117 11.2178 12.679 11.9424 11.9495C12.667 11.22 12.9883 9.53333 12.9883 9.53333C12.9883 9.53333 13.321 11.2178 14.0505 11.9424Z" fill-rule="evenodd" stroke="url(#paint_linear_0)" stroke-opacity="0.379999995" stroke-linejoin="round" stroke-width="0.800000012" />
+		<path id="Star 7" d="M14.0505 11.9424C14.78 12.6669 16.4667 12.9883 16.4667 12.9883C16.4667 12.9883 14.7822 13.321 14.0576 14.0505C13.333 14.78 13.0117 16.4667 13.0117 16.4667C13.0117 16.4667 12.679 14.7822 11.9495 14.0576C11.22 13.333 9.53333 13.0117 9.53333 13.0117C9.53333 13.0117 11.2178 12.679 11.9424 11.9495C12.667 11.22 12.9883 9.53333 12.9883 9.53333C12.9883 9.53333 13.321 11.2178 14.0505 11.9424Z" fill-rule="evenodd" stroke="url(#paint_linear_1)" stroke-opacity="0.200000003" stroke-linejoin="round" stroke-width="0.800000012" />
+		<path id="Star 8" d="M4.51717 2.40904C5.24665 3.13362 6.93333 3.45496 6.93333 3.45496C6.93333 3.45496 5.24886 3.78768 4.52429 4.51717C3.79971 5.24665 3.47838 6.93333 3.47838 6.93333C3.47838 6.93333 3.14565 5.24886 2.41617 4.52429C1.68668 3.79971 0 3.47838 0 3.47838C0 3.47838 1.68447 3.14565 2.40904 2.41617C3.13362 1.68668 3.45496 0 3.45496 0C3.45496 0 3.78768 1.68447 4.51717 2.40904Z" fill-rule="evenodd" stroke="url(#paint_linear_2)" stroke-opacity="0.379999995" stroke-linejoin="round" stroke-width="0.800000012" transform="matrix(-1,0,0,-1,16.4667,16.4667)" />
+		<path id="Star 8" d="M4.51717 2.40904C5.24665 3.13362 6.93333 3.45496 6.93333 3.45496C6.93333 3.45496 5.24886 3.78768 4.52429 4.51717C3.79971 5.24665 3.47838 6.93333 3.47838 6.93333C3.47838 6.93333 3.14565 5.24886 2.41617 4.52429C1.68668 3.79971 0 3.47838 0 3.47838C0 3.47838 1.68447 3.14565 2.40904 2.41617C3.13362 1.68668 3.45496 0 3.45496 0C3.45496 0 3.78768 1.68447 4.51717 2.40904Z" fill-rule="evenodd" stroke="url(#paint_linear_3)" stroke-opacity="0.200000003" stroke-linejoin="round" stroke-width="0.800000012" transform="matrix(-1,0,0,-1,16.4667,16.4667)" />
+	</g>
+	<g id="中内心">
+		<path id="Star 7" d="M13.7879 12.2068C14.335 12.7502 15.6 12.9912 15.6 12.9912C15.6 12.9912 14.3366 13.2408 13.7932 13.7879C13.2498 14.335 13.0088 15.6 13.0088 15.6C13.0088 15.6 12.7592 14.3367 12.2121 13.7932C11.665 13.2498 10.4 13.0088 10.4 13.0088C10.4 13.0088 11.6634 12.7593 12.2068 12.2121C12.7502 11.665 12.9912 10.4 12.9912 10.4C12.9912 10.4 13.2408 11.6634 13.7879 12.2068Z" fill-rule="evenodd" stroke="url(#paint_linear_4)" stroke-opacity="0.379999995" stroke-linejoin="round" stroke-width="0.800000012" />
+		<path id="Star 7" d="M13.7879 12.2068C14.335 12.7502 15.6 12.9912 15.6 12.9912C15.6 12.9912 14.3366 13.2408 13.7932 13.7879C13.2498 14.335 13.0088 15.6 13.0088 15.6C13.0088 15.6 12.7592 14.3367 12.2121 13.7932C11.665 13.2498 10.4 13.0088 10.4 13.0088C10.4 13.0088 11.6634 12.7593 12.2068 12.2121C12.7502 11.665 12.9912 10.4 12.9912 10.4C12.9912 10.4 13.2408 11.6634 13.7879 12.2068Z" fill-rule="evenodd" stroke="url(#paint_linear_5)" stroke-opacity="0.200000003" stroke-linejoin="round" stroke-width="0.800000012" />
+		<path id="Star 8" d="M3.38787 1.80678C3.93499 2.35022 5.2 2.59122 5.2 2.59122C5.2 2.59122 3.93665 2.84076 3.39322 3.38787C2.84978 3.93499 2.60878 5.2 2.60878 5.2C2.60878 5.2 2.35924 3.93665 1.81212 3.39322C1.26501 2.84978 0 2.60878 0 2.60878C0 2.60878 1.26335 2.35924 1.80678 1.81212C2.35022 1.26501 2.59122 0 2.59122 0C2.59122 0 2.84076 1.26335 3.38787 1.80678Z" fill-rule="evenodd" stroke="url(#paint_linear_6)" stroke-opacity="0.379999995" stroke-linejoin="round" stroke-width="0.800000012" transform="matrix(-1,0,0,-1,15.6,15.6)" />
+		<path id="Star 8" d="M3.38787 1.80678C3.93499 2.35022 5.2 2.59122 5.2 2.59122C5.2 2.59122 3.93665 2.84076 3.39322 3.38787C2.84978 3.93499 2.60878 5.2 2.60878 5.2C2.60878 5.2 2.35924 3.93665 1.81212 3.39322C1.26501 2.84978 0 2.60878 0 2.60878C0 2.60878 1.26335 2.35924 1.80678 1.81212C2.35022 1.26501 2.59122 0 2.59122 0C2.59122 0 2.84076 1.26335 3.38787 1.80678Z" fill-rule="evenodd" stroke="url(#paint_linear_7)" stroke-opacity="0.200000003" stroke-linejoin="round" stroke-width="0.800000012" transform="matrix(-1,0,0,-1,15.6,15.6)" />
+	</g>
+	<g id="内心">
+		<path id="Star 7" d="M12.9978 12.1333C12.9978 12.1333 13.081 12.5544 13.2634 12.7356C13.4457 12.9167 13.8674 12.997 13.8674 12.997C13.8674 12.997 13.4463 13.0802 13.2651 13.2626C13.084 13.445 13.0037 13.8666 13.0037 13.8666C13.0037 13.8666 12.9205 13.4455 12.7381 13.2644C12.5557 13.0832 12.1341 13.0029 12.1341 13.0029C12.1341 13.0029 12.5552 12.9197 12.7363 12.7373C12.9175 12.555 12.9978 12.1333 12.9978 12.1333Z" fill="url(#paint_linear_8)" fill-rule="evenodd" />
+		<path id="Star 8" d="M0.863739 0C0.863739 0 0.94692 0.421117 1.12929 0.602261C1.31166 0.783405 1.73333 0.863739 1.73333 0.863739C1.73333 0.863739 1.31222 0.94692 1.13107 1.12929C0.949928 1.31166 0.869594 1.73333 0.869594 1.73333C0.869594 1.73333 0.786413 1.31222 0.604042 1.13107C0.42167 0.949928 0 0.869594 0 0.869594C0 0.869594 0.421117 0.786413 0.602261 0.604042C0.783405 0.42167 0.863739 0 0.863739 0Z" fill="url(#paint_linear_9)" fill-rule="evenodd" transform="matrix(-1,-3.95941e-09,3.95941e-09,-1,13.8674,13.8666)" />
+	</g>
+</svg>
