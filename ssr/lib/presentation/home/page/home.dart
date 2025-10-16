@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ssr/model/router.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
-import 'package:ssr/presentation/video/play_video.dart';
 import 'package:ssr/data/service/local/database_manager.dart';
 import 'package:ssr/common/animated/disappear.dart';
+import 'package:ssr/presentation/video_page/video_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   //------------------------------------------------------------------------------
   // 状态变量和动画键
   //------------------------------------------------------------------------------
-  
+
   // 数据同步按钮的动画键
   final GlobalKey<State<Disappear>> _animatedButtonKey = GlobalKey();
 
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final databaseManager = DatabaseManager();
       final result = await databaseManager.importAllDataFromCloud();
-      
+
       // 重置动画
       if (animatedState != null) {
         (animatedState as dynamic).resetAnimation();
@@ -186,24 +186,19 @@ class _HomePageState extends State<HomePage> {
         SizedBox(height: 20),
         const Text('Welcome to the Home Page!'),
         SizedBox(height: 20),
-        
+
         // 数据同步按钮区域
-        if (!_isSyncing && _syncMessage == null)
-          _buildSyncButton(),
-        
+        if (!_isSyncing && _syncMessage == null) _buildSyncButton(),
+
         // 同步状态消息区域
-        if (_syncMessage != null)
-          _buildSyncMessage(),
-        
+        if (_syncMessage != null) _buildSyncMessage(),
+
         SizedBox(height: 20),
-        
+
         // 用户按钮区域
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildUser1Section(),
-            _buildUser2Section(),
-          ],
+          children: [_buildUser1Section(), _buildUser2Section()],
         ),
         SizedBox(height: 40),
       ],

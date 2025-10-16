@@ -70,7 +70,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: 20),
                           NavigatorButtom(
-                            page: SoundPage(),
+                            page: SoundPage(
+                              listCount: 10,
+                              listName: '播单系列名字',
+                              title: '[标题]这是一个师父的录音',
+                              soundFileUrl:
+                                  'https://rmtt.top/projectDoc/testMp3.mp3',
+                              coverUrl:
+                                  'https://rmtt.top/projectDoc/testJpg.jpg',
+                            ),
                             buttonText: '跳转到听音频页面',
                           ),
                         ],

@@ -1,18 +1,37 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:ssr/presentation/sound_page/widget/audio_player_widget.dart';
+import 'package:ssr/presentation/sound_page/widget/cover_widget.dart';
+import 'package:ssr/presentation/sound_page/widget/title_widget.dart';
 
 class SoundPage extends StatefulWidget {
-  const SoundPage({super.key});
+  final String title;
+  final String soundFileUrl;
+  final String coverUrl;
+  final String listName;
+  final int listCount;
+  const SoundPage({
+    super.key,
+    required this.title,
+    required this.soundFileUrl,
+    required this.coverUrl,
+    required this.listName,
+    required this.listCount,
+  });
 
   @override
   State<SoundPage> createState() => _SoundPageState();
 }
 
 class _SoundPageState extends State<SoundPage> {
+  AudioPlayer advancedPlayer = AudioPlayer();
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width * 0.85;
-    final screenHeight = screenWidth * 9 / 16;
-
     return Container(
       color: Color.fromARGB(255, 1, 29, 68),
       child: Column(
@@ -37,12 +56,35 @@ class _SoundPageState extends State<SoundPage> {
             ],
           ),
           SizedBox(height: 30),
+          CoverWidget(coverUrl: widget.coverUrl),
+          SizedBox(height: 20),
           Container(
-            width: screenWidth,
-            height: screenHeight,
-            decoration: BoxDecoration(
-              color: Color(0xffA47508),
-              borderRadius: BorderRadius.circular(20),
+            padding: EdgeInsets.symmetric(horizontal: 24),
+
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+
+                  child: Column(
+                    children: [
+                      TitleWidget(
+                        title: widget.title,
+                        listName: widget.listName,
+                      ),
+                      SizedBox(height: 8),
+                      ListTitleView(
+                        listName: widget.listName,
+                        listCount: widget.listCount,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 4),
+                Divider(height: 16, color: Color(0xff815B0B)),
+                SizedBox(height: 16),
+                AudioPlayProvider(advancedPlayer: advancedPlayer),
+              ],
             ),
           ),
         ],

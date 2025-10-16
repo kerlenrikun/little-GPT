@@ -26,6 +26,21 @@ dependencies:
   #视频播放器组件
   chewie: ^1.13.0
   video_player: ^2.10.0
+
+  #音频播放服务
+  audio_service: ^0.18.18
+  audioplayers: ^6.5.1
+
+
+  #网络图片缓存
+  cached_network_image: ^3.4.1
+
+  # 网络请求
+  dio: ^5.9.0
+  http: ^1.5.0
+  pretty_dio_logger: ^1.4.0
+
+  get_it: ^8.2.0
   
 dev_dependencies:
   flutter_test:

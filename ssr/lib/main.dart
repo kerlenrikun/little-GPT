@@ -34,7 +34,13 @@ class MyApp extends StatelessWidget {
           SigninPage: (context) => const SigninPage(),
           RegisterPage: (context) => const RegisterPage(),
           PlayVideo: (context) => const PlayVideo(),
-          SoundPage: (context) => const SoundPage(),
+          SoundPage: (context) => const SoundPage(
+            listName: '播单系列名字',
+            title: '[标题]这是一个师父的录音',
+            soundFileUrl: 'http://116.62.64.88/projectDoc/testMp3.mp3',
+            coverUrl: 'http://116.62.64.88/projectDoc/testJpg.jpg', // 修改为jpg格式
+            listCount: 10,
+          ),
         }),
       },
       home: HomePage(),
