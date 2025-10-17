@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ssr/presentation/article_page/article_provider.dart';
+import 'package:ssr/presentation/article_page/util/article_provider.dart';
 import 'package:ssr/presentation/article_page/widget/article_content_widget.dart';
 import 'package:ssr/presentation/article_page/widget/article_cover_widget.dart';
 import 'package:ssr/presentation/article_page/widget/article_info_widget.dart';

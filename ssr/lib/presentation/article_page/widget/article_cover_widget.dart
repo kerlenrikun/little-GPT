@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ssr/presentation/article_page/article_provider.dart';
+import 'package:ssr/presentation/article_page/util/article_provider.dart';
 
 class ArticleCoverWidget extends StatefulWidget {
   const ArticleCoverWidget({super.key});

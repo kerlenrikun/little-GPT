@@ -2,7 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:ssr/presentation/article_page/article_provider.dart';
+import 'package:ssr/presentation/article_page/util/article_provider.dart';
 
 /// 数据模型：高亮（用户收藏）
 class HighlightRange {

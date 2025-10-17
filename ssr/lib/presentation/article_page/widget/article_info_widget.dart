@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ssr/presentation/article_page/article_provider.dart';
+import 'package:ssr/presentation/article_page/util/article_provider.dart';
 
 class ArticleInfoWidget extends StatefulWidget {
   const ArticleInfoWidget({super.key});
