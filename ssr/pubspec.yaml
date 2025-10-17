@@ -29,7 +29,6 @@ dependencies:
 
   #音频播放服务
   audio_service: ^0.18.18
-  audioplayers: ^6.5.1
   just_audio: ^0.10.5
   just_audio_background: ^0.0.1-beta.17
   audio_session: ^0.1.17
@@ -46,6 +45,9 @@ dependencies:
   http: ^1.5.0
   pretty_dio_logger: ^1.4.0
 
+  # 路由切换动画
+  flutter_route_shifter: ^1.2.1
+
   get_it: ^8.2.0
   
 dev_dependencies:
@@ -58,6 +60,7 @@ flutter:
 
   assets:
     - assets/vectors/
+    - assets/images/
 
   uses-material-design: true
   fonts:
@@ -73,4 +76,11 @@ flutter:
           weight: 400
         - asset: assets/fonts/Satoshi-Light.ttf
           weight: 300
-
+    - family: yzRH
+      fonts: 
+        - asset: assets/fonts/yzRH.ttf
+          weight: 400
+    - family: hzSimple
+      fonts: 
+        - asset: assets/fonts/hcSimple.ttf
+          weight: 400

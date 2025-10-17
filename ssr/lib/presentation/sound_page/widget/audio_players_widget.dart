@@ -12,6 +12,64 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:ssr/presentation/sound_page/utils/audio_cache_manager_uilts.dart';
 import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
+// 全局AudioPlayer单例 - 使用公开命名以便其他文件访问
+AudioPlayer? _globalAudioPlayer;
+
+// // 全局AudioPlayer使用方法
+// // 1. 首先导入audio_players_widget.dart文件
+// import 'package:ssr/presentation/sound_page/widget/audio_players_widget.dart';
+
+// // 2. 获取全局播放器实例
+// AudioPlayer player = getGlobalAudioPlayer();
+
+// // 3. 然后你就可以控制播放器了
+// // 暂停播放
+// await player.pause();
+
+// // 继续播放
+// await player.play();
+
+// // 刷新音频源
+// await player.setAudioSource(/* 新的音频源 */);
+
+// // 跳转到指定位置
+// await player.seek(Duration(seconds: 30));
+
+// // 获取播放状态
+// bool isPlaying = player.playing;
+// Duration position = await player.position;
+
+// // - 3.
+// // 资源管理 ：
+// // - 在应用退出时，应该调用 disposeGlobalAudioPlayer() 来释放资源
+// // - 这通常放在应用的主入口文件(main.dart)的dispose逻辑中
+
+// // - 4.
+// // 注意事项 ：
+// // - 由于这是全局共享的实例，任何文件中的操作都会影响到所有使用该实例的组件
+// // - 多个组件同时控制播放器时需要注意状态同步问题
+// // - 建议添加状态监听，以便在一个组件中操作播放器时，其他组件能够感知到状态变化
+
+/// 获取全局共享的AudioPlayer实例
+/// 其他文件可以导入此文件并使用此函数获取同一个播放器实例
+AudioPlayer getGlobalAudioPlayer() {
+  if (_globalAudioPlayer == null) {
+    print('🎵 创建全局AudioPlayer单例实例');
+    _globalAudioPlayer = AudioPlayer();
+  }
+  return _globalAudioPlayer!;
+}
+
+/// 释放全局AudioPlayer实例资源
+/// 应该在应用退出前调用此方法
+void disposeGlobalAudioPlayer() {
+  if (_globalAudioPlayer != null) {
+    print('🔇 释放全局AudioPlayer实例资源');
+    _globalAudioPlayer!.dispose();
+    _globalAudioPlayer = null;
+  }
+}
+
 // 假设的修改，确保CachedAudioPlayer能响应URL变化
 class CachedAudioPlayer extends StatefulWidget {
   final String audioUrl;
@@ -80,6 +138,7 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
   //   // 实现加载新音频的逻辑
   // }
 
+  // 使用全局AudioPlayer单例
   late final AudioPlayer _player;
   double _downloadProgress = 0;
   bool _isCaching = false;
@@ -92,11 +151,20 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
   @override
   void initState() {
     super.initState();
-    _player = AudioPlayer();
+    // 获取全局AudioPlayer单例实例
+    _player = getGlobalAudioPlayer();
+
     // 优先使用组件传递的URL，如果为空则使用Provider中的URL
     _updateCurrentAudioUrl();
     print('初始音频资源链接: $_currentAudioUrl');
     _initialize();
+  }
+
+  @override
+  void dispose() {
+    // 不在这里释放_player，因为它是全局单例
+    // 如果需要在应用退出时释放，应该在应用的主入口或专用的资源管理类中处理
+    super.dispose();
   }
 
   @override
@@ -108,9 +176,9 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
         : context.watch<AudioUrlProvider>().audioUrl;
 
     if (newAudioUrl != _currentAudioUrl && newAudioUrl.isNotEmpty) {
+      print('检测到音频URL变化: $_currentAudioUrl -> $newAudioUrl');
       _currentAudioUrl = newAudioUrl;
-      print('音频资源链接更新: $newAudioUrl');
-      _loadAudio(newAudioUrl);
+      _loadAndPlayNewAudio(newAudioUrl);
     }
   }
 
@@ -286,10 +354,26 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
 
           // 下载完毕后切换播放源到本地缓存
           if (mounted && _player.playing) {
-            print("🔄 缓存完成后切换到本地播放");
+            // 记录当前播放进度
+            final currentPosition = _player.position;
+            print("🔄 缓存完成后切换到本地播放，当前进度: $currentPosition");
+
+            // 设置本地音频源
             await _player.setAudioSource(
-              AudioSource.uri(Uri.file(target.path)),
+              AudioSource.uri(
+                Uri.file(target.path),
+                tag: MediaItem(
+                  id: url,
+                  title: widget.title,
+                  artist: widget.artist,
+                  artUri: Uri.parse("https://picsum.photos/200"),
+                ),
+              ),
             );
+
+            // 恢复到之前的播放进度
+            await _player.seek(currentPosition);
+            print("✅ 已恢复播放进度到: $currentPosition");
           }
         },
         onError: (e) async {
@@ -407,12 +491,6 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
         _player.playing ? await _player.pause() : await _player.play();
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
   }
 
   @override

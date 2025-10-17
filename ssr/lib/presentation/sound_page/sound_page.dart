@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssr/presentation/sound_page/widget/audio_players_widget.dart';
@@ -9,14 +8,12 @@ import 'package:ssr/presentation/sound_page/widget/title_widget.dart';
 import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
 class SoundPage extends StatefulWidget {
-  final String soundFileUrl;
   final String title;
   final String coverUrl;
   final String listName;
   final int listCount;
   const SoundPage({
     super.key,
-    this.soundFileUrl = '',
     required this.title,
     required this.coverUrl,
     required this.listName,
@@ -28,16 +25,9 @@ class SoundPage extends StatefulWidget {
 }
 
 class _SoundPageState extends State<SoundPage> {
-  AudioPlayer advancedPlayer = AudioPlayer();
   @override
   void initState() {
     super.initState();
-    // 将音频链接同步到AudioUrlProvider
-    if (widget.soundFileUrl.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<AudioUrlProvider>().updateAudioUrl(widget.soundFileUrl);
-      });
-    }
   }
 
   @override
@@ -47,7 +37,7 @@ class _SoundPageState extends State<SoundPage> {
         // 获取当前的音频URL，如果Provider中没有则使用初始URL
         String currentAudioUrl = audioUrlProvider.audioUrl.isNotEmpty
             ? audioUrlProvider.audioUrl
-            : widget.soundFileUrl;
+            : '';
 
         return Container(
           color: Color.fromARGB(255, 1, 29, 68),
@@ -91,6 +81,7 @@ class _SoundPageState extends State<SoundPage> {
                                 TitleWidget(
                                   title: widget.title,
                                   listName: widget.listName,
+                                  listCount: widget.listCount,
                                 ),
                                 SizedBox(height: 8),
                                 ListTitleView(

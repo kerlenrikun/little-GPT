@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class TitleWidget extends StatefulWidget {
   final String title;
   final String listName;
+  final int listCount;
 
-  const TitleWidget({super.key, required this.title, required this.listName});
+  const TitleWidget({
+    super.key,
+    required this.title,
+    required this.listName,
+    this.listCount = 0,
+  });
 
   @override
   State<TitleWidget> createState() => _TitleWidgetState();

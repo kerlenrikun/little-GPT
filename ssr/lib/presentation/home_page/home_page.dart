@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ssr/model/router.dart';
+import 'package:ssr/presentation/article_page/article_page.dart';
+import 'package:ssr/presentation/audio_select_page/audio_select_page.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
 import 'package:ssr/presentation/sound_page/sound_page.dart';
 import 'package:ssr/presentation/video_page/video_page.dart';
+import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -70,16 +74,27 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: 20),
                           NavigatorButtom(
+                            audioUrl:
+                                'http://116.62.64.88/projectDoc/testLongMp3.mp3',
                             page: SoundPage(
                               listCount: 10,
                               listName: '播单系列名字',
                               title: '[标题]这是一个师父的录音',
-                              soundFileUrl:
-                                  'http://116.62.64.88/projectDoc/testLongMp3.mp3',
+
                               coverUrl:
                                   'http://116.62.64.88/projectDoc/testJpg.jpg',
                             ),
                             buttonText: '跳转到听音频页面',
+                          ),
+                          SizedBox(height: 20),
+                          NavigatorButtom(
+                            page: AudioSelectPage(),
+                            buttonText: '跳转到音频选择页面',
+                          ),
+                          SizedBox(height: 20),
+                          NavigatorButtom(
+                            page: ArticlePage(),
+                            buttonText: '跳转到文章页面',
                           ),
                         ],
                       ),
@@ -101,11 +116,13 @@ class NavigatorButtom extends StatefulWidget {
   // 添加页面实例参数和按钮文本参数
   final Widget page;
   final String buttonText;
+  final String audioUrl;
 
   const NavigatorButtom({
     super.key,
     required this.page,
     required this.buttonText,
+    this.audioUrl = '',
   });
 
   @override
@@ -120,6 +137,12 @@ class _NavigatorButtomState extends State<NavigatorButtom> {
       onPressed: () {
         // 通过widget.page.runtimeType获取页面类型并进行跳转
         context.to(widget.page.runtimeType);
+        if (widget.audioUrl.isNotEmpty) {
+          context.read<AudioUrlProvider>().updateAudioUrl(widget.audioUrl);
+          print('更新音频URL: ${widget.audioUrl}'); // 添加调试日志以确认URL被正确传递
+        } else {
+          print('警告: 音频URL为空'); // 添加错误处理
+        }
       },
       // 按钮文本
       child: Text(widget.buttonText),

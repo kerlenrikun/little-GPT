@@ -3,6 +3,8 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:ssr/core/config/theme/app_colors.dart';
 import 'package:ssr/model/router.dart';
 import 'package:provider/provider.dart';
+import 'package:ssr/presentation/article_page/article_page.dart';
+import 'package:ssr/presentation/audio_select_page/audio_select_page.dart';
 import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart'; // 导入AudioUrlProvider
 
 // 导入路由
@@ -48,15 +50,16 @@ class MyApp extends StatelessWidget {
             HomePage: (context) => const HomePage(),
             SigninPage: (context) => const SigninPage(),
             RegisterPage: (context) => const RegisterPage(),
+            AudioSelectPage: (context) => const AudioSelectPage(),
             PlayVideo: (context) => const PlayVideo(),
             SoundPage: (context) => const SoundPage(
               listName: '播单系列名字',
               title: '[标题]这是一个师父的录音',
-              soundFileUrl: 'http://116.62.64.88/projectDoc/testLongMp3.mp3',
               coverUrl:
                   'http://116.62.64.88/projectDoc/testJpg.jpg', // 修改为jpg格式
               listCount: 10,
             ),
+            ArticlePage: (context) => const ArticlePage(),
           }),
         },
         home: HomePage(),
