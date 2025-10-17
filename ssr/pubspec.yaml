@@ -56,6 +56,9 @@ dev_dependencies:
 
 flutter:
 
+  assets:
+    - assets/vectors/
+
   uses-material-design: true
   fonts:
     - family: Satoshi

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:just_audio/just_audio.dart';
@@ -8,24 +10,76 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:ssr/presentation/sound_page/utils/audio_cache_manager_uilts.dart';
+import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
+// 假设的修改，确保CachedAudioPlayer能响应URL变化
 class CachedAudioPlayer extends StatefulWidget {
   final String audioUrl;
   final String title;
   final String artist;
 
   const CachedAudioPlayer({
-    super.key,
+    Key? key,
     required this.audioUrl,
-    this.title = '音频标题',
-    this.artist = '未知作者',
-  });
+    required this.title,
+    required this.artist,
+  }) : super(key: key);
 
   @override
-  State<CachedAudioPlayer> createState() => _CachedAudioPlayerState();
+  _CachedAudioPlayerState createState() => _CachedAudioPlayerState();
 }
 
 class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
+  // 完善didUpdateWidget方法，确保URL变化时正确切换音频
+  @override
+  void didUpdateWidget(covariant CachedAudioPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // 如果音频URL发生变化，重新加载音频
+    if (oldWidget.audioUrl != widget.audioUrl && widget.audioUrl.isNotEmpty) {
+      print('检测到音频URL变化: ${oldWidget.audioUrl} -> ${widget.audioUrl}');
+      _loadAndPlayNewAudio(widget.audioUrl);
+    }
+  }
+
+  // 实现加载并播放新音频的方法
+  Future<void> _loadAndPlayNewAudio(String url) async {
+    try {
+      // 停止当前播放的音频
+      if (_player.playing) {
+        await _player.stop();
+      }
+
+      // 清除旧的播放进度记录
+      final prefs = await SharedPreferences.getInstance();
+      final oldKey = _currentAudioUrl?.split('/').last ?? '';
+      if (oldKey.isNotEmpty) {
+        await prefs.remove("pos_$oldKey");
+        print("🧹 清除旧音频播放进度记录: pos_$oldKey");
+      }
+
+      // 更新当前音频URL
+      _currentAudioUrl = url;
+
+      // 播放新音频前清零播放进度
+      setState(() {
+        _position = Duration.zero;
+        _duration = Duration.zero;
+      });
+
+      // 重新加载音频
+      print('准备加载新音频: $url');
+      await _loadAudio(url);
+    } catch (e) {
+      print('加载新音频失败: $e');
+    }
+  }
+
+  // 删除原有的空方法
+  // void _loadNewAudio() {
+  //   // 实现加载新音频的逻辑
+  // }
+
   late final AudioPlayer _player;
   double _downloadProgress = 0;
   bool _isCaching = false;
@@ -33,24 +87,51 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
   Duration _position = Duration.zero;
   Duration _buffered = Duration.zero;
   String? _cachePath;
+  String? _currentAudioUrl;
 
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
-    print('音频资源链接: ${widget.audioUrl}');
+    // 优先使用组件传递的URL，如果为空则使用Provider中的URL
+    _updateCurrentAudioUrl();
+    print('初始音频资源链接: $_currentAudioUrl');
     _initialize();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 优先使用组件传递的URL，如果为空则使用Provider中的URL并监听变化
+    final newAudioUrl = widget.audioUrl.isNotEmpty
+        ? widget.audioUrl
+        : context.watch<AudioUrlProvider>().audioUrl;
+
+    if (newAudioUrl != _currentAudioUrl && newAudioUrl.isNotEmpty) {
+      _currentAudioUrl = newAudioUrl;
+      print('音频资源链接更新: $newAudioUrl');
+      _loadAudio(newAudioUrl);
+    }
   }
 
   Future<void> _initialize() async {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.music());
-    await _loadAudio();
+    if (_currentAudioUrl?.isNotEmpty == true) {
+      _loadAudio(_currentAudioUrl!);
+    }
+  }
+
+  //判断使用音频资源的路径，优先使用传递的Url，若无则使用Provider的
+  void _updateCurrentAudioUrl() {
+    _currentAudioUrl = widget.audioUrl.isNotEmpty || widget.audioUrl != ''
+        ? widget.audioUrl
+        : context.read<AudioUrlProvider>().audioUrl;
   }
 
   /// 检查缓存 → 若存在用本地文件播放，否则边播边缓存
   /// 加载并播放音频（带分段缓存 + 断点续传 + 自动清理）
-  Future<void> _loadAudio() async {
+  Future<void> _loadAudio(String url) async {
     final dio = Dio();
     final cacheManager = AudioCacheManager();
 
@@ -60,7 +141,6 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
     // 每次加载时执行一次清理任务（清理两天前未访问缓存）
     await AudioCacheManager.scheduledCleanup();
 
-    final url = widget.audioUrl;
     final cachedFile = await cacheManager.getCachedFile(url);
 
     // ① 若命中缓存文件 → 直接本地播放
@@ -68,56 +148,42 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
       print("📦 本地缓存命中，直接播放: ${cachedFile.path}");
       _cachePath = cachedFile.path;
 
-      // 更新最后访问时间
       await cacheManager.updateAccessTime(url);
-
-      await _playFrom(Uri.file(cachedFile.path));
+      await _playFrom(Uri.file(cachedFile.path), url);
       return;
     }
 
-    // ② 若缓存缺失 → 启动分段断点续传下载
-    print("🌐 缓存缺失，启动分段缓存 + 边播边下载");
+    // ② 若缓存缺失 → 启动动态边播边缓存
+    print("🌐 缓存缺失，启动动态缓存任务");
     _isCaching = true;
 
-    // 启动分段缓存任务（支持断点续传）
-    unawaited(
-      cacheManager
-          .cacheAudio(
-            url,
-            onProgress: (progress) {
-              if (mounted) {
-                setState(() => _downloadProgress = progress);
-              }
-            },
-          )
-          .then((_) async {
-            _isCaching = false;
+    // 获取缓存路径
+    final temp = await cacheManager.createTempFile(url);
+    final target = await cacheManager.createTargetFile(url);
 
-            // 下载完成后获取缓存文件
-            final completedFile = await cacheManager.getCachedFile(url);
-            if (completedFile != null && await completedFile.exists()) {
-              print("✅ 分段缓存完成，切换至本地播放");
-              _cachePath = completedFile.path;
-              await _playFrom(Uri.file(completedFile.path));
-            }
-          }),
-    );
+    // 开始边播边缓存任务
+    unawaited(_startStreamingAndCaching(url, target, temp));
 
-    // ③ 边播边缓存（播放网络流）
-    await _playFrom(Uri.parse(url));
+    // 同时播放网络流（边播边缓存）
+    await _playFrom(Uri.parse(url), url);
   }
 
   /// 播放音频
-  Future<void> _playFrom(Uri uri) async {
+  Future<void> _playFrom(Uri uri, String url) async {
     final prefs = await SharedPreferences.getInstance();
-    final key = widget.audioUrl.split('/').last;
-    final lastPos = prefs.getInt("pos_$key") ?? 0;
+    final key = url.split('/').last;
+
+    // ❌ 删除或注释掉旧进度恢复逻辑
+    // final lastPos = prefs.getInt("pos_$key") ?? 0;
+
+    // ✅ 强制新音频从头开始
+    final lastPos = 0;
 
     await _player.setAudioSource(
       AudioSource.uri(
         uri,
         tag: MediaItem(
-          id: widget.audioUrl,
+          id: url,
           title: widget.title,
           artist: widget.artist,
           artUri: Uri.parse("https://picsum.photos/200"),
@@ -146,6 +212,7 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
   }
 
   /// 边播边缓存
+  /// 动态分段续缓存 + 自动断点续传
   Future<void> _startStreamingAndCaching(
     String url,
     File target,
@@ -155,7 +222,7 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
     final dio = Dio();
 
     try {
-      // 1️⃣ 先获取文件大小
+      // 1️⃣ 获取文件大小
       final head = await dio.head(url);
       final totalBytes =
           int.tryParse(
@@ -169,42 +236,61 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
         return;
       }
 
-      // 2️⃣ 设置缓存比例，例如 20%（或 10MB）
-      const cachePercent = 0.2;
-      final bytesToCache = (totalBytes * cachePercent).toInt();
-      final rangeEnd = bytesToCache - 1;
+      // 2️⃣ 检查已缓存进度（断点续传）
+      int downloaded = 0;
+      if (await temp.exists()) {
+        downloaded = await temp.length();
+        print("🔁 检测到已缓存部分数据: $downloaded 字节");
+      }
 
-      print(
-        "🧩 开始缓存前 ${(cachePercent * 100).toInt()}% (${bytesToCache ~/ 1024} KB)",
-      );
+      // 若已缓存完毕直接转为目标文件
+      if (downloaded >= totalBytes) {
+        await temp.rename(target.path);
+        setState(() => _isCaching = false);
+        print("✅ 已完全缓存，无需继续下载");
+        return;
+      }
 
-      // 3️⃣ 请求指定范围
+      // 3️⃣ 设置 Range 请求，断点续传
       final response = await dio.get<ResponseBody>(
         url,
         options: Options(
           responseType: ResponseType.stream,
-          headers: {'Range': 'bytes=0-$rangeEnd'},
+          headers: {'Range': 'bytes=$downloaded-${totalBytes - 1}'},
           validateStatus: (status) => status != null && status < 400,
         ),
       );
 
-      final sink = temp.openWrite();
-      int received = 0;
-      final total = bytesToCache;
+      final sink = temp.openWrite(mode: FileMode.append);
+      int received = downloaded;
 
       response.data!.stream.listen(
         (chunk) {
           received += chunk.length;
           sink.add(chunk);
-          if (mounted) {
-            setState(() => _downloadProgress = received / total);
-          }
+
+          final progress = received / totalBytes;
+          if (mounted) setState(() => _downloadProgress = progress);
         },
         onDone: () async {
           await sink.close();
+
+          // 下载完成 → 覆盖目标文件
           await temp.rename(target.path);
-          print("✅ 已缓存 ${(_downloadProgress * 100).toStringAsFixed(1)}%");
+          print("✅ 分段缓存完成，总计 ${(received / 1024).toStringAsFixed(1)} KB");
+
+          // 更新最后访问时间
+          await AudioCacheManager().updateAccessTime(url);
+
           setState(() => _isCaching = false);
+
+          // 下载完毕后切换播放源到本地缓存
+          if (mounted && _player.playing) {
+            print("🔄 缓存完成后切换到本地播放");
+            await _player.setAudioSource(
+              AudioSource.uri(Uri.file(target.path)),
+            );
+          }
         },
         onError: (e) async {
           print("❌ 缓存失败: $e");
@@ -264,7 +350,7 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 trackShape: CustomTrackShape(), // 自定义轨道形状
-                thumbShape: const CustomThumbShape(thumbRadius: 10), // 自定义滑块形状
+                thumbShape: const CustomThumbShape(thumbRadius: 8), // 自定义滑块形状
                 overlayShape: const RoundSliderOverlayShape(
                   overlayRadius: 0,
                 ), // 禁止外层高亮圈
@@ -304,8 +390,18 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
     return IconButton(
       iconSize: 52,
       icon: _player.playing
-          ? const Icon(Icons.pause, color: Color(0xffb0b0b0))
-          : const Icon(Icons.play_arrow_outlined, color: Color(0xffb0b0b0)),
+          ? SvgPicture.asset(
+              'assets/vectors/audio_pause.svg',
+              colorFilter: ColorFilter.mode(Color(0xffDCD2BD), BlendMode.srcIn),
+              width: 65,
+              height: 65,
+            )
+          : SvgPicture.asset(
+              'assets/vectors/audio_play.svg',
+              colorFilter: ColorFilter.mode(Color(0xffDCD2BD), BlendMode.srcIn),
+              width: 65,
+              height: 65,
+            ),
       // 🔹 删除了 `_isCaching ? null :` 限制，让播放键始终可用
       onPressed: () async {
         _player.playing ? await _player.pause() : await _player.play();
@@ -326,9 +422,9 @@ class _CachedAudioPlayerState extends State<CachedAudioPlayer> {
       shadowColor: Colors.transparent,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      margin: const EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(horizontal: 12),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

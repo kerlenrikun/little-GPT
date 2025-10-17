@@ -188,6 +188,105 @@ class AudioCacheManager {
     };
   }
 
+  /// 动态缓冲：根据播放进度自动续缓存（保持领先 bufferPercent）
+  Future<void> cacheUntilBufferAhead(
+    String url, {
+    required double playProgress, // 播放进度 [0.0 ~ 1.0]
+    double bufferAheadPercent = 0.2, // 默认领先 20%
+    void Function(double)? onProgress,
+  }) async {
+    final dir = Directory(p.join(_cacheDir.path, _hash(url)));
+    if (!await dir.exists()) await dir.create(recursive: true);
+
+    final metaFile = File(p.join(dir.path, "meta.json"));
+    Map<String, dynamic> meta = await _loadMeta(metaFile, url);
+
+    // 如果总大小未知则先获取
+    int totalSize = meta["total_size"] ?? 0;
+    if (totalSize == 0) {
+      final head = await dio.head(url);
+      totalSize = int.parse(head.headers.value('content-length') ?? '0');
+      meta["total_size"] = totalSize;
+    }
+
+    final totalParts = (totalSize / partSize).ceil();
+    List<int> downloadedParts = List<int>.from(meta["downloaded_parts"]);
+    final bufferedPercent = downloadedParts.length / totalParts;
+
+    // 若缓冲已经足够，则不再下载
+    if (bufferedPercent >= playProgress + bufferAheadPercent) return;
+
+    // 计算目标缓冲终点（例如 播放0.3 -> 目标缓冲到0.5）
+    final targetPercent = (playProgress + bufferAheadPercent).clamp(0.0, 1.0);
+    final targetPart = (targetPercent * totalParts).ceil();
+
+    print(
+      "🎧 当前进度 ${(playProgress * 100).toStringAsFixed(1)}%，"
+      "缓冲到 ${(bufferedPercent * 100).toStringAsFixed(1)}%，"
+      "目标缓冲 ${(targetPercent * 100).toStringAsFixed(1)}%",
+    );
+
+    // 依次下载目标区间内的分段
+    for (int i = 0; i < targetPart; i++) {
+      if (downloadedParts.contains(i)) continue;
+
+      final start = i * partSize;
+      final end = ((i + 1) * partSize) - 1;
+      final partFile = File(p.join(dir.path, "part_$i.tmp"));
+
+      try {
+        final res = await dio.get<List<int>>(
+          url,
+          options: Options(
+            responseType: ResponseType.bytes,
+            headers: {"Range": "bytes=$start-$end"},
+          ),
+        );
+
+        await partFile.writeAsBytes(res.data!);
+        downloadedParts.add(i);
+        meta["downloaded_parts"] = downloadedParts;
+        await metaFile.writeAsString(jsonEncode(meta));
+
+        if (onProgress != null) {
+          onProgress(downloadedParts.length / totalParts);
+        }
+      } catch (e) {
+        print("❌ 动态分段 $i 下载失败: $e");
+        break;
+      }
+
+      // 每下载完一段就检查是否超过目标缓冲区
+      final nowBuffered = downloadedParts.length / totalParts;
+      if (nowBuffered >= targetPercent) {
+        print("✅ 达到目标缓冲 ${(targetPercent * 100).toStringAsFixed(1)}%，暂停下载");
+        break;
+      }
+    }
+
+    // 更新索引
+    meta["last_access"] = DateTime.now().toIso8601String();
+    _index[url] = meta;
+    await _saveIndex();
+  }
+
+  /// 创建临时缓存文件路径（未完成的下载）
+  Future<File> createTempFile(String url) async {
+    final dir = Directory(p.join(_cacheDir.path, _hash(url)));
+    if (!await dir.exists()) await dir.create(recursive: true);
+    return File(p.join(dir.path, "partial.tmp"));
+  }
+
+  /// 创建目标缓存文件路径（最终完整音频）
+  Future<File> createTargetFile(String url) async {
+    final dir = Directory(p.join(_cacheDir.path, _hash(url)));
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final ext = p.extension(url);
+    // 如果没有后缀，就默认用 .mp3
+    final safeExt = ext.isEmpty ? ".mp3" : ext;
+    return File(p.join(dir.path, "final$safeExt"));
+  }
+
   Future<void> updateAccessTime(String url) async {
     if (_index[url] != null) {
       _index[url]["last_access"] = DateTime.now().toIso8601String();
