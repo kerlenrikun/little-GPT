@@ -21,7 +21,7 @@ class ArtWordWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '音频',
+                '课程',
                 style: TextStyle(
                   fontSize: 80,
                   fontFamily: 'yzRH',

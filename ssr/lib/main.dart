@@ -11,7 +11,7 @@ import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart'; // 导
 import 'package:ssr/presentation/home_page/home_page.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
-import 'package:ssr/presentation/sound_page/sound_page.dart';
+import 'package:ssr/presentation/audio_page/audio_page.dart';
 import 'package:ssr/presentation/video_page/video_page.dart';
 
 void main() async {

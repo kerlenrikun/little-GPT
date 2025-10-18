@@ -16,14 +16,14 @@ const String TOKEN = "Bearer token";
 const String BASE_URL = "https://wpapi.ducafecat.tech";
 
 /// woo 电商 api 请求工具类
-class WooHttpUtil {
-  static final WooHttpUtil _instance = WooHttpUtil._internal();
-  factory WooHttpUtil() => _instance;
+class DioUtil {
+  static final DioUtil _instance = DioUtil._internal();
+  factory DioUtil() => _instance;
 
-  late Dio _dio;
+  late Dio dio;
 
   /// 单例初始
-  WooHttpUtil._internal() {
+  DioUtil._internal() {
     // header 头
     Map<String, String> headers = {
       CONTENT_TYPE: APPLICATION_JSON,
@@ -42,11 +42,11 @@ class WooHttpUtil {
     );
 
     // 初始 dio
-    _dio = Dio(options);
+    dio = Dio(options);
 
     // 拦截器 - 日志打印
     if (!kReleaseMode) {
-      _dio.interceptors.add(
+      dio.interceptors.add(
         PrettyDioLogger(
           requestHeader: true,
           requestBody: true,
@@ -56,7 +56,7 @@ class WooHttpUtil {
     }
 
     // 拦截器
-    _dio.interceptors.add(RequestInterceptors());
+    dio.interceptors.add(RequestInterceptors());
   }
 
   /// get 请求
@@ -67,7 +67,7 @@ class WooHttpUtil {
     CancelToken? cancelToken,
   }) async {
     Options requestOptions = options ?? Options();
-    Response response = await _dio.get(
+    Response response = await dio.get(
       url,
       queryParameters: params,
       options: requestOptions,
@@ -84,7 +84,7 @@ class WooHttpUtil {
     CancelToken? cancelToken,
   }) async {
     var requestOptions = options ?? Options();
-    Response response = await _dio.post(
+    Response response = await dio.post(
       url,
       data: data ?? {},
       options: requestOptions,
@@ -101,7 +101,7 @@ class WooHttpUtil {
     CancelToken? cancelToken,
   }) async {
     var requestOptions = options ?? Options();
-    Response response = await _dio.put(
+    Response response = await dio.put(
       url,
       data: data ?? {},
       options: requestOptions,
@@ -118,7 +118,7 @@ class WooHttpUtil {
     CancelToken? cancelToken,
   }) async {
     var requestOptions = options ?? Options();
-    Response response = await _dio.delete(
+    Response response = await dio.delete(
       url,
       data: data ?? {},
       options: requestOptions,

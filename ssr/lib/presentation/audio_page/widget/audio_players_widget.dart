@@ -9,7 +9,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:ssr/presentation/sound_page/utils/audio_cache_manager_uilts.dart';
+import 'package:ssr/presentation/audio_page/utils/audio_cache_manager_uilts.dart';
 import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
 // 全局AudioPlayer单例 - 使用公开命名以便其他文件访问

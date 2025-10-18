@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ssr/presentation/sound_page/widget/playlist_card_widget.dart';
+import 'package:ssr/presentation/audio_page/widget/playlist_card_widget.dart';
 
 class Playlist extends StatefulWidget {
   const Playlist({super.key});

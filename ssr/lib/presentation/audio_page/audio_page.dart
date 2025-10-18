@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ssr/presentation/sound_page/widget/audio_players_widget.dart';
-import 'package:ssr/presentation/sound_page/widget/cover_widget.dart';
-import 'package:ssr/presentation/sound_page/widget/interaction_widget.dart';
-import 'package:ssr/presentation/sound_page/widget/playlist_widget.dart';
-import 'package:ssr/presentation/sound_page/widget/title_widget.dart';
+import 'package:ssr/presentation/audio_page/widget/audio_players_widget.dart';
+import 'package:ssr/presentation/audio_page/widget/cover_widget.dart';
+import 'package:ssr/presentation/audio_page/widget/interaction_widget.dart';
+import 'package:ssr/presentation/audio_page/widget/playlist_widget.dart';
+import 'package:ssr/presentation/audio_page/widget/title_widget.dart';
 import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
 class SoundPage extends StatefulWidget {

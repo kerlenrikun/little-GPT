@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssr/model/router.dart';
-import 'package:ssr/presentation/sound_page/sound_page.dart';
+import 'package:ssr/presentation/audio_page/audio_page.dart';
 import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
 class AudioListCardWidget extends StatefulWidget {

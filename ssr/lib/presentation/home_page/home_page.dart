@@ -5,7 +5,7 @@ import 'package:ssr/presentation/article_page/article_page.dart';
 import 'package:ssr/presentation/audio_select_page/audio_select_page.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
-import 'package:ssr/presentation/sound_page/sound_page.dart';
+import 'package:ssr/presentation/audio_page/audio_page.dart';
 import 'package:ssr/presentation/video_page/video_page.dart';
 import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
 
@@ -74,13 +74,11 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: 20),
                           NavigatorButtom(
-                            audioUrl:
-                                'http://116.62.64.88/projectDoc/testLongMp3.mp3',
+                            audioUrl: '1Jz4XflAsLh6C',
                             page: SoundPage(
                               listCount: 10,
                               listName: '播单系列名字',
                               title: '[标题]这是一个师父的录音',
-
                               coverUrl:
                                   'http://116.62.64.88/projectDoc/testJpg.jpg',
                             ),

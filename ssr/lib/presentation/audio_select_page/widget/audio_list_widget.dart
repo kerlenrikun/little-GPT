@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ssr/presentation/audio_page/utils/audio_cloud_sync_util.dart';
 import 'package:ssr/presentation/audio_select_page/widget/audio_list_card_widget.dart';
 
 class AudioListWidget extends StatefulWidget {
@@ -8,35 +9,35 @@ class AudioListWidget extends StatefulWidget {
 }
 
 class _AudioListWidgetState extends State<AudioListWidget> {
-  List<Map<String, dynamic>> audioList = [
-    {
-      'audioName': '音频1',
-      'audioUrl': 'http://116.62.64.88/projectDoc/testLongMp3.mp3',
-    },
-    {
-      'audioName': '音频2',
-      'audioUrl': 'http://116.62.64.88/projectDoc/testMp3.mp3',
-    },
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio3.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio4.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio5.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio6.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio7.mp3'},
-    {'audioName': '音频1', 'audioUrl': 'https://example.com/audio1.mp3'},
-    {'audioName': '音频2', 'audioUrl': 'https://example.com/audio2.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio3.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio4.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio5.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio6.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio7.mp3'},
-    {'audioName': '音频1', 'audioUrl': 'https://example.com/audio1.mp3'},
-    {'audioName': '音频2', 'audioUrl': 'https://example.com/audio2.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio3.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio4.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio5.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio6.mp3'},
-    {'audioName': '音频3', 'audioUrl': 'https://example.com/audio7.mp3'},
-  ];
+  List<Map<String, dynamic>> audioList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // 异步获取音频列表并更新状态
+    AudioCloudSync()
+        .getListInfoById('WJ6WHdexv0L7')
+        .then((value) {
+          setState(() {
+            // 将Map<String, dynamic>转换为List<Map<String, dynamic>>
+            final listContentMap = value['listContent'] as Map<String, dynamic>;
+            audioList = listContentMap.values
+                .map(
+                  (item) => {
+                    'audioId': item['audioId'] ?? '',
+                    'audioName': item['name'] ?? item['audioName'] ?? '',
+                    'sort': item['sort'] ?? '0',
+                  },
+                )
+                .toList();
+            print('转换后的音频列表长度: ${audioList.length}');
+            print('音频列表内容: $audioList');
+          });
+        })
+        .catchError((error) {
+          print('获取音频列表失败: $error');
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class _AudioListWidgetState extends State<AudioListWidget> {
         itemBuilder: (context, index) {
           return AudioListCardWidget(
             audioName: audioList[index]['audioName'],
-            audioUrl: audioList[index]['audioUrl'],
+            audioUrl: audioList[index]['audioId'],
             index: index + 1, // 直接使用索引+1作为序号
             listCount: audioList.length,
           );
