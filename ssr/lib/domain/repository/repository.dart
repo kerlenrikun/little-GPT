@@ -4,7 +4,6 @@ import 'package:ssr/data/service/local/database_manager.dart';
 
 /// T: 实体类型，必须实现fromMap和toMap方法
 abstract class Repository<T> {
-
   /// ==================================云端 API服务==================================
 
   late CloudApiService _cloudeApiService;
@@ -12,8 +11,8 @@ abstract class Repository<T> {
 
   /// 构造函数 - 通过tableKey初始化  云端  API服务
   Repository(String tableKey, String tableName) : tableName = tableName {
-      _cloudeApiService = CloudApiService(tableKey: tableKey);
-      _databaseManager = DatabaseManager();
+    _cloudeApiService = CloudApiService(tableKey: tableKey);
+    _databaseManager = DatabaseManager();
   }
 
   /// 泛型 - 所有实体都会有fromMap方法, 这里通过泛型调用
@@ -21,7 +20,7 @@ abstract class Repository<T> {
 
   /// 泛型 - 所有实体都会有toMap方法, 这里通过泛型调用
   Map<String, dynamic> toClMap(T entity);
-  
+
   /// 泛型 - 所有服务体都会有queryRecords方法, 这里通过泛型调用
   Future<List<T>> query(String filter) async {
     try {
@@ -30,7 +29,7 @@ abstract class Repository<T> {
       if (result['success'] == true) {
         final data = result['data'] as Map<String, dynamic>;
         final items = data['data']?['items'] as List? ?? [];
-        
+
         return items.map<T>((item) {
           return fromClMap(item as Map<String, dynamic>);
         }).toList();
@@ -46,11 +45,11 @@ abstract class Repository<T> {
   Future<List<T>> getAll() async {
     try {
       final result = await _cloudeApiService.queryRecords();
-      
+
       if (result['success'] == true) {
         final data = result['data'] as Map<String, dynamic>;
         final items = data['data']?['items'] as List? ?? [];
-        
+
         return items.map<T>((item) {
           return fromClMap(item as Map<String, dynamic>);
         }).toList();
@@ -68,13 +67,9 @@ abstract class Repository<T> {
       final recordData = toClMap(entity);
       print(recordData);
       final result = await _cloudeApiService.addRecord(recordData);
-      
+
       if (result['success'] == true) {
-        return {
-          'success': true,
-          'message': '数据添加成功',
-          'data': entity,
-        };
+        return {'success': true, 'message': '数据添加成功', 'data': entity};
       } else {
         return {
           'success': false,
@@ -83,11 +78,7 @@ abstract class Repository<T> {
         };
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': '添加过程中发生错误',
-        'error': e.toString(),
-      };
+      return {'success': false, 'message': '添加过程中发生错误', 'error': e.toString()};
     }
   }
 
@@ -95,22 +86,14 @@ abstract class Repository<T> {
   Future<Map<String, dynamic>> update(String recordId, T entity) async {
     try {
       if (recordId.isEmpty) {
-        return {
-          'success': false,
-          'message': '记录ID为空，无法更新',
-        };
+        return {'success': false, 'message': '记录ID为空，无法更新'};
       }
-      
+
       final recordData = toClMap(entity);
       final result = await _cloudeApiService.updateRecord(recordId, recordData);
 
-      
       if (result['success'] == true) {
-        return {
-          'success': true,
-          'message': '数据更新成功',
-          'data': entity,
-        };
+        return {'success': true, 'message': '数据更新成功', 'data': entity};
       } else {
         return {
           'success': false,
@@ -119,11 +102,7 @@ abstract class Repository<T> {
         };
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': '更新过程中发生错误',
-        'error': e.toString(),
-      };
+      return {'success': false, 'message': '更新过程中发生错误', 'error': e.toString()};
     }
   }
 
@@ -131,19 +110,13 @@ abstract class Repository<T> {
   Future<Map<String, dynamic>> delete(String recordId) async {
     try {
       if (recordId.isEmpty) {
-        return {
-          'success': false,
-          'message': '记录ID为空，无法删除',
-        };
+        return {'success': false, 'message': '记录ID为空，无法删除'};
       }
-      
+
       final result = await _cloudeApiService.deleteRecord(recordId);
-      
+
       if (result['success'] == true) {
-        return {
-          'success': true,
-          'message': '数据删除成功',
-        };
+        return {'success': true, 'message': '数据删除成功'};
       } else {
         return {
           'success': false,
@@ -152,11 +125,7 @@ abstract class Repository<T> {
         };
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': '删除过程中发生错误',
-        'error': e.toString(),
-      };
+      return {'success': false, 'message': '删除过程中发生错误', 'error': e.toString()};
     }
   }
 
@@ -164,6 +133,7 @@ abstract class Repository<T> {
 
   /// 本地数据库服务
   String tableName = 'users';
+
   /// 访问databaseManager
   DatabaseManager get databaseManager => _databaseManager;
 
@@ -204,48 +174,36 @@ abstract class Repository<T> {
   }
 
   /// 添加新的数据到本地
-  Future<Map<String, dynamic>> addLo(T entity) async { 
+  Future<Map<String, dynamic>> addLo(T entity) async {
     try {
       final db = await _databaseManager.database;
       final dataMap = toLoMap(entity);
-      
+
       // 移除id字段，让数据库自动生成
       dataMap.remove('id');
-      
+
       final id = await db.insert(
         tableName,
         dataMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
-      return {
-        'success': true,
-        'message': '数据添加成功',
-        'id': id,
-        'data': entity,
-      };
+      return {'success': true, 'message': '数据添加成功', 'id': id, 'data': entity};
     } catch (e) {
-      return {
-        'success': false,
-        'message': '添加过程中发生错误',
-        'error': e.toString(),
-      };
+      return {'success': false, 'message': '添加过程中发生错误', 'error': e.toString()};
     }
   }
-  
+
   /// 更新本地数据
   Future<Map<String, dynamic>> updateLo(int? id, T entity) async {
     try {
       if (id == null || id <= 0) {
-        return {
-          'success': false,
-          'message': '记录ID无效，无法更新',
-        };
+        return {'success': false, 'message': '记录ID无效，无法更新'};
       }
 
       final db = await _databaseManager.database;
       final dataMap = toLoMap(entity);
-      
+
       final rowsAffected = await db.update(
         tableName,
         dataMap,
@@ -254,23 +212,12 @@ abstract class Repository<T> {
       );
 
       if (rowsAffected > 0) {
-        return {
-          'success': true,
-          'message': '数据更新成功',
-          'data': entity,
-        };
+        return {'success': true, 'message': '数据更新成功', 'data': entity};
       } else {
-        return {
-          'success': false,
-          'message': '未找到要更新的记录',
-        };
+        return {'success': false, 'message': '未找到要更新的记录'};
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': '更新过程中发生错误',
-        'error': e.toString(),
-      };
+      return {'success': false, 'message': '更新过程中发生错误', 'error': e.toString()};
     }
   }
 
@@ -278,10 +225,7 @@ abstract class Repository<T> {
   Future<Map<String, dynamic>> deleteLo(int? id) async {
     try {
       if (id == null || id <= 0) {
-        return {
-          'success': false,
-          'message': '记录ID无效，无法删除',
-        };
+        return {'success': false, 'message': '记录ID无效，无法删除'};
       }
 
       final db = await _databaseManager.database;
@@ -292,22 +236,12 @@ abstract class Repository<T> {
       );
 
       if (rowsAffected > 0) {
-        return {
-          'success': true,
-          'message': '数据删除成功',
-        };
+        return {'success': true, 'message': '数据删除成功'};
       } else {
-        return {
-          'success': false,
-          'message': '未找到要删除的记录',
-        };
+        return {'success': false, 'message': '未找到要删除的记录'};
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': '删除过程中发生错误',
-        'error': e.toString(),
-      };
+      return {'success': false, 'message': '删除过程中发生错误', 'error': e.toString()};
     }
   }
 

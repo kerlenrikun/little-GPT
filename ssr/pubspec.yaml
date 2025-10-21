@@ -17,6 +17,9 @@ dependencies:
   shared_preferences: ^2.2.3
   # 数据库
   sqflite: ^2.3.0
+  # 图形化数据库
+  local_db_explorer: ^1.0.0
+
   path: ^1.9.0
   # 支持在Windows等平台上运行数据库
   sqflite_common_ffi: ^2.3.0

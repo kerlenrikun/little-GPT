@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:local_db_explorer/local_db_explorer.dart';
 import 'package:provider/provider.dart';
+import 'package:ssr/data/service/local/database_manager.dart';
 import 'package:ssr/model/router.dart';
-import 'package:ssr/presentation/article_page/article_page.dart';
-import 'package:ssr/presentation/audio_select_page/audio_select_page.dart';
+import 'package:ssr/presentation/article/article_page.dart';
+import 'package:ssr/common/page/select/select_page.dart';
+import 'package:ssr/presentation/article/util/article_colud_sync.dart';
+import 'package:ssr/presentation/audio/utils/audio_cloud_sync_util.dart';
+import 'package:ssr/presentation/audio/utils/audio_db_manager.dart';
 import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
-import 'package:ssr/presentation/audio_page/audio_page.dart';
-import 'package:ssr/presentation/video_page/video_page.dart';
-import 'package:ssr/provider/audio_url_provider/audio_url_provider.dart';
+import 'package:ssr/presentation/audio/audio_page.dart';
+import 'package:ssr/presentation/collection/collection_page.dart';
+import 'package:ssr/presentation/video/video_page.dart';
+import 'package:ssr/domain/provider/audio_url_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -94,6 +100,37 @@ class _HomePageState extends State<HomePage> {
                             page: ArticlePage(),
                             buttonText: '跳转到文章页面',
                           ),
+                          SizedBox(height: 20),
+                          NavigatorButtom(
+                            page: CollectionPage(),
+                            buttonText: '跳转到收藏页面',
+                          ),
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              // AudioCloudSync().getAudioInfoById(
+                              //   '1Jz4XflAsLh6C',
+                              // );
+                              // AudioCloudSync().getListInfoById('dH54V8pdutGW');
+                              // AudioDbManager().queryAudioRecord();
+                              // AudioDbManager().querySeriesRecord();
+                              ArticleColudSync().getArticleInfoById(
+                                '13zGFY9uXaQzW',
+                              );
+                            },
+                            child: Text('网络测试按钮'),
+                          ),
+
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () async {
+                              // 先确保数据库已初始化
+                              await DatabaseManager().database;
+                              // 打开数据库可视化界面
+                              DBExplorer.open(context);
+                            },
+                            child: const Text('🗃️ 打开数据库查看器'),
+                          ),
                         ],
                       ),
                     ],
@@ -137,6 +174,7 @@ class _NavigatorButtomState extends State<NavigatorButtom> {
         context.to(widget.page.runtimeType);
         if (widget.audioUrl.isNotEmpty) {
           context.read<AudioUrlProvider>().updateAudioUrl(widget.audioUrl);
+          context.read<AudioUrlProvider>().updateAudioId(widget.audioUrl);
           print('更新音频URL: ${widget.audioUrl}'); // 添加调试日志以确认URL被正确传递
         } else {
           print('警告: 音频URL为空'); // 添加错误处理

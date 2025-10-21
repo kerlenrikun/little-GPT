@@ -368,6 +368,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "5.1.1"
+  local_db_explorer:
+    dependency: "direct main"
+    description:
+      name: local_db_explorer
+      sha256: "6c69ff884ef7fd8054eb3a50b1263b5de2271f4445c0a79432741ff4b311cd74"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0+3"
   logging:
     dependency: transitive
     description:

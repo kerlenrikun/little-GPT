@@ -4,7 +4,7 @@ import 'package:ssr/presentation/auth/page/signin.dart';
 import 'package:ssr/presentation/auth/page/register.dart';
 import 'package:ssr/data/service/local/database_manager.dart';
 import 'package:ssr/common/animated/disappear.dart';
-import 'package:ssr/presentation/video_page/video_page.dart';
+import 'package:ssr/presentation/video/video_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
 
     try {
       final databaseManager = DatabaseManager();
-      final result = await databaseManager.importAllDataFromCloud();
+      // final result = await databaseManager.importAllDataFromCloud();
 
       // 重置动画
       if (animatedState != null) {
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         _isSyncing = false;
-        _syncMessage = '数据同步完成！\n用户数据: ${result['users']}条';
+        // _syncMessage = '数据同步完成！\n用户数据: ${result['users']}条';
       });
     } catch (e) {
       // 重置动画

@@ -1,172 +1,217 @@
-import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:local_db_explorer/local_db_explorer.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:ssr/domain/provider/db_path_provider.dart';
 
-import 'package:ssr/domain/repository/user_repository.dart';
-
-/// 数据库管理器 - 负责数据库的创建、初始化和操作
 class DatabaseManager {
   static final DatabaseManager _instance = DatabaseManager._internal();
   static Database? _database;
+  String? _customPath;
+  DbPathProvider? _provider;
   String? _actualDbPath;
 
-  // 当前数据库版本号
-  static const int _dbVersion = 2;
-
-  factory DatabaseManager() {
+  factory DatabaseManager({String? dbPath, DbPathProvider? provider}) {
+    _instance._customPath = dbPath;
+    _instance._provider = provider;
     return _instance;
   }
 
-  DatabaseManager._internal() {
-    // 初始化数据库工厂（适用于桌面平台）
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      databaseFactory = databaseFactoryFfi;
-    }
-  }
-  
+  DatabaseManager._internal();
+
   String? get dbPath => _actualDbPath;
 
-  /// 获取数据库实例
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
+    // 🔍 注册数据库到本地可视化工具
+    DBExplorer.registerAdapter(
+      SqfliteAdapter(_database!, databaseName: 'SSR App Database'),
+    );
+
     return _database!;
   }
 
-  /// 初始化数据库
   Future<Database> _initDatabase() async {
+    DatabaseFactory factory = databaseFactory;
 
-    final path = join(Directory.current.path, 'lib', 'data', 'resource', 'local', 'data.db');
-    _actualDbPath = path;
+    final path = _customPath ?? join(await getDatabasesPath(), 'data.db');
+    _actualDbPath = path; // 保存实际使用的路径
     print('<DatabaseManager>数据库路径: $path');
 
-    return await openDatabase(
+    // 同步给 Provider
+    _provider?.setDbPath(path);
+
+    // 使用正确的参数打开数据库
+    return await factory.openDatabase(
       path,
-      version: _dbVersion,
-      onCreate: _createTables,
-      onUpgrade: _upgradeTables,
+      options: OpenDatabaseOptions(
+        version: 15, // 升级版本号以触发onUpgrade
+        onCreate: _createTables,
+        onOpen: _updateTables,
+        onUpgrade: _upgradeDatabase, // 添加升级回调
+      ),
     );
   }
 
-  /// 创建数据库表
+  // 初始化整体数据库表
   Future<void> _createTables(Database db, int version) async {
-    // 创建用户表
+    //用法
+    // await db.execute('''
+    //     CREATE TABLE IF NOT EXISTS 表名 (
+    //       列名 列类型,
+    //       列名 列类型,
+    //       列名 列类型,
+    //       列名 列类型,
+    //       列名 列类型,
+    //       列名 列类型,
+    //     )
+    //   ''');
+
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        record_id TEXT,
-        full_name TEXT NOT NULL,
-        phone_number TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        created_time TEXT DEFAULT '',
-        last_login_time TEXT DEFAULT '',
-        allow_job TEXT DEFAULT '{}'
+        CREATE TABLE IF NOT EXISTS audio (
+          audio_id TEXT PRIMARY KEY,
+          uni_key TEXT DEFAULT 'nocache',
+          record_id TEXT,
+          audio_name TEXT,
+          interaction TEXT,
+          ancestor_ids TEXT,
+          root_comment_ids TEXT,
+          UNIQUE(uni_key, audio_id)
+        )
+      ''');
+    await db.execute('''
+        CREATE TABLE IF NOT EXISTS series (
+          series_id TEXT PRIMARY KEY,
+          uni_key TEXT DEFAULT 'nocache',
+          record_id TEXT,
+          series_name TEXT,
+          series_type TEXT,
+          series_content TEXT,
+          UNIQUE(uni_key, series_id)
+        )
+      ''');
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS articles (
+        article_id TEXT PRIMARY KEY,
+        content_hash TEXT,
+        author_name TEXT,
+        title TEXT,
+        content TEXT,
+        article_mark TEXT,
+        publish_time TEXT,
+        image_url TEXT,
+        source TEXT,
+        video_url TEXT,
+        audio_url TEXT,
+        deleted INTEGER DEFAULT 0,
+        record_id TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS highlights (
+        highlight_id TEXT PRIMARY KEY,
+        user_id TEXT,
+        article_id TEXT,
+        start INTEGER,
+        end INTEGER,
+        text TEXT,
+        color TEXT,
+        created_time TEXT,
+        updated_time TEXT,
+        deleted INTEGER DEFAULT 0,
+        FOREIGN KEY(article_id) REFERENCES articles(article_id)
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS comments (
+        comment_id TEXT PRIMARY KEY,
+        article_id TEXT,
+        start INTEGER,
+        end INTEGER,
+        user_id TEXT,
+        text TEXT,
+        comment TEXT,
+        created_time TEXT,
+        updated_time TEXT,
+        deleted INTEGER DEFAULT 0,
+        FOREIGN KEY(article_id) REFERENCES articles(article_id)
       )
     ''');
   }
 
-  /// 升级数据库表
-  Future<void> _upgradeTables(Database db, int oldVersion, int newVersion) async {
-    // 当数据库版本不匹配时，删除并重新创建所有表
-    print('<DatabaseManager>升级数据库: 从版本 $oldVersion 升级到 $newVersion');
-    
-    // 删除所有表
-    await db.execute('DROP TABLE IF EXISTS users');
-    
-    // 重新创建所有表
-    await _createTables(db, newVersion);
-  }
-  
-  /// 关闭数据库连接
-  Future<void> close() async {
-    if (_database != null) {
-      await _database!.close();
-      _database = null;
-    }
-  }
-  
-  /// 重置数据库 - 删除所有表并重新创建
-  Future<void> resetDatabase() async {
-    await close();
-    
-    // 删除数据库文件
-    if (_actualDbPath != null) {
-      try {
-        final file = File(_actualDbPath!);
-        if (await file.exists()) {
-          await file.delete();
-          print('<DatabaseManager>数据库文件已删除: $_actualDbPath');
-        }
-      } catch (e) {
-        print('<DatabaseManager>删除数据库文件失败: $e');
-      }
-    }
-    
-    // 重置数据库连接
-    _database = null;
-    // 重新初始化数据库
-    await database;
+  // 更新数据库表结构
+  Future<void> _updateTables(Database db) async {
+    await _upgradeDatabase(db, 14, 15);
+    // 用法
+    // await _addColumnIfNotExists (db, '表名', '新增列名', '列类型')
+    // 使用CREATE TABLE IF NOT EXISTS确保表存在但不会重复创建
   }
 
-  /// 清除所有数据
-  Future<void> clearAllData() async {
-    final db = await database;
-    await db.delete('users');
-  }
-
-  /// 从云端导入用户数据到本地数据库
-  Future<int> importUsersFromCloud() async {
-    final db = await database;
-    final userRepository = UserRepository();
-    int importedCount = 0;
-
-    try {
-      // 从飞书获取所有用户
-      final users = await userRepository.getAll();
-      if (users.isNotEmpty) {
-        // 使用事务批量插入
-        await db.transaction((txn) async {
-          // 先清空本地用户表
-          await txn.delete('users');
-          
-          // 批量插入新数据
-          for (final user in users) {
-            final map = user.toLoMap();
-            // 移除id字段，让数据库自动生成
-            map.remove('id');
-            await txn.insert('users', map, conflictAlgorithm: ConflictAlgorithm.replace);
-            importedCount++;
-          }
-        });
-      }
-      
-      print('<DatabaseManager>成功从云端导入 $importedCount 条用户数据');
-      return importedCount;
-    } catch (e) {
-      print('<DatabaseManager>从云端导入用户数据失败: $e');
-      return 0;
+  // 更新数据库表结构
+  Future<void> _addColumnIfNotExists(
+    Database db,
+    String table,
+    String column,
+    String type,
+  ) async {
+    final res = await db.rawQuery('PRAGMA table_info($table)');
+    final exists = res.any((row) => row['name'] == column);
+    if (!exists) {
+      await db.execute('ALTER TABLE $table ADD COLUMN $column $type');
     }
   }
 
+  // 数据库升级逻辑
+  Future<void> _upgradeDatabase(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (true) {
+      // 删除旧表
+      await db.execute('DROP TABLE IF EXISTS audio');
+      await db.execute('DROP TABLE IF EXISTS series');
+      await db.execute('DROP TABLE IF EXISTS articles');
+      await db.execute('DROP TABLE IF EXISTS highlights');
+      await db.execute('DROP TABLE IF EXISTS comments');
 
-  /// 导入所有云端数据到本地数据库
-  Future<Map<String, int>> importAllDataFromCloud() async {
-    final result = <String, int>{
-      'users': 0,
-      'accountData': 0,
-      'commonData': 0,
-      'succData': 0,
-    };
-    
-    try {
-      result['users'] = await importUsersFromCloud();
-      
-      print('<DatabaseManager>成功从云端导入所有数据');
-    } catch (e) {
-      print('<DatabaseManager>从云端导入所有数据失败: $e');
+      // 重新创建表
+      await _createTables(db, newVersion);
     }
-
-    return result;
+    print('数据库从版本$oldVersion升级到版本$newVersion成功');
   }
+
+  // 用法
+  // Future<String> function() async {
+
+  // 定义 Future 数据库连接
+  // final Future<Database> _database = DatabaseManager().database;
+
+  // 查询数据
+  // await db.query('表名',
+  // columns: ['字段A', '字段B'], // 仅获取某字段，若不写则为全部字段
+  // where: '字段C = ? AND 字段D = ?', // 条件：字段等于指定值
+  // whereArgs: [参数,参数]); // 绑定参数，防止SQL注入
+
+  // 插入数据
+  // await db.insert('表名', {
+  //   '列名': 值
+  // }, conflictAlgorithm: ConflictAlgorithm.replace); // 插入策略：若重复则替换
+
+  // 更新数据
+  //   await db.update(
+  //   '表名',
+  //   {'字段A': 值, '字段B': 值,'字段C': 值}, // 需要更新的字段
+  //   where: '字段D = ?', // 条件：字段等于指定值
+  //   whereArgs: [参数], // 绑定参数，防止SQL注入
+  // );
+
+  // 删除数据
+  // await db.delete('表名',
+  //   where: '字段 = ?', // 条件：字段等于指定值
+  //   whereArgs: [参数]); // 绑定参数，防止SQL注入
+  // }
 }
