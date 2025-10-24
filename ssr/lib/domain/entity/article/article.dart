@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 /// 文章实体类 - 定义文章数据结构和操作
-class Article {
+class ArticleEntity {
   final String recordId;
   final String articleId;
   final String title;
@@ -15,7 +15,7 @@ class Article {
   final String contentHash;
   final bool deleted;
 
-  Article({
+  ArticleEntity({
     required this.recordId,
     required this.articleId,
     required this.title,
@@ -31,7 +31,7 @@ class Article {
   });
 
   /// 创建一个新的文章实体，仅修改指定的属性
-  Article copyWith({
+  ArticleEntity copyWith({
     String? recordId,
     String? articleId,
     String? title,
@@ -45,7 +45,7 @@ class Article {
     String? contentHash,
     bool? deleted,
   }) {
-    return Article(
+    return ArticleEntity(
       recordId: recordId ?? this.recordId,
       articleId: articleId ?? this.articleId,
       title: title ?? this.title,
@@ -62,8 +62,8 @@ class Article {
   }
 
   /// 从数据库Map转换为Article
-  factory Article.fromLoMap(Map<String, dynamic> map) {
-    return Article(
+  factory ArticleEntity.fromLoMap(Map<String, dynamic> map) {
+    return ArticleEntity(
       recordId: map['record_id'] as String? ?? '',
       articleId: map['article_id'] as String? ?? '',
       title: map['title'] as String? ?? '',
@@ -99,8 +99,8 @@ class Article {
   }
 
   /// 从云端Map转换为Article
-  factory Article.fromClMap(Map<String, dynamic> map) {
-    return Article(
+  factory ArticleEntity.fromClMap(Map<String, dynamic> map) {
+    return ArticleEntity(
       recordId:
           map['article_id'] as String? ?? map['article_id'] as String? ?? '',
       articleId: map['article_id'] as String? ?? '',
@@ -147,14 +147,14 @@ class Article {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Article && other.articleId == articleId;
+    return other is ArticleEntity && other.articleId == articleId;
   }
 
   @override
   int get hashCode => articleId.hashCode;
 
   /// 判断两个实体是否相同
-  bool isSame(Article other) {
+  bool isSame(ArticleEntity other) {
     return this.articleId == other.articleId &&
         this.contentHash == other.contentHash;
   }

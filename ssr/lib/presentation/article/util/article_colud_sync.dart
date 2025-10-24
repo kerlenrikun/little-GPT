@@ -26,7 +26,7 @@ class ArticleColudSync {
       print('文章信息获取成功，状态码: ${response.statusCode}');
       final resourceData = response.data["resource"];
 
-      final article = Article.fromClMap(resourceData);
+      final article = ArticleEntity.fromClMap(resourceData);
       await ArticleDbManager().insertArticle(article.toLoMap());
 
       // 解析并存储评论列表

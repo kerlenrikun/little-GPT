@@ -141,10 +141,10 @@ class _HomePageState extends State<HomePage> {
                   child: Text('跳转到登录页面'),
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => context.to(RegisterPage),
-                  child: Text('跳转到注册页面'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () => context.to(RegisterPage),
+                //   child: Text('跳转到注册页面'),
+                // ),
               ],
             ),
           ],

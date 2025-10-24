@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
           ...AppRouter.addRouteMap({
             HomePage: (context) => const HomePage(),
             SigninPage: (context) => const SigninPage(),
-            RegisterPage: (context) => const RegisterPage(),
+            // RegisterPage: (context) => const RegisterPage(),
             AudioSelectPage: (context) => const AudioSelectPage(),
             PlayVideo: (context) => const PlayVideo(),
             SoundPage: (context) => const SoundPage(

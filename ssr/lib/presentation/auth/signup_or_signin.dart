@@ -7,8 +7,8 @@ import 'package:ssr/core/config/assets/app_images.dart';
 import 'package:ssr/core/config/assets/app_vector.dart';
 import 'package:ssr/core/config/theme/__init__.dart';
 import 'package:ssr/model/router.dart';
-import 'package:ssr/presentation/auth/register.dart';
-import 'package:ssr/presentation/auth/signin.dart';
+import 'package:ssr/presentation/auth/page/register.dart';
+import 'package:ssr/presentation/auth/page/signin.dart';
 
 class SignupOrSigninPage extends StatelessWidget {
   const SignupOrSigninPage({super.key});
@@ -78,17 +78,17 @@ class SignupOrSigninPage extends StatelessWidget {
                   Row(
                     children: [
                       // 注册
-                      Expanded(
-                        flex: 1,
-                        child: BasicAppButton(
-                          height: 73,
-                          title: 'Register',
-                          fontsize: 18,
-                          letterspacing: 1,
-                          color: Colors.white,
-                          onPressed: () => context.to(RegisterPage),
-                        ),
-                      ),
+                      // Expanded(
+                      //   flex: 1,
+                      //   child: BasicAppButton(
+                      //     height: 73,
+                      //     title: 'Register',
+                      //     fontsize: 18,
+                      //     letterspacing: 1,
+                      //     color: Colors.white,
+                      //     onPressed: () => context.to(RegisterPage),
+                      //   ),
+                      // ),
                       SizedBox(width: 20),
                       //登录
                       Expanded(

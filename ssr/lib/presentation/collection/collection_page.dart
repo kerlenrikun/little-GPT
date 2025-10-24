@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ssr/presentation/collection/page/all_collectionl_page.dart';
 import 'package:ssr/presentation/collection/widget/type_switch_widget.dart';
 
 class CollectionPage extends StatefulWidget {
@@ -67,6 +68,8 @@ class TabPage extends StatefulWidget {
 class _TabPageState extends State<TabPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(child: Column(children: [TypeSwitchWidget()]));
+    return Container(
+      child: Column(children: [TypeSwitchWidget(), AllCollectionlPage()]),
+    );
   }
 }

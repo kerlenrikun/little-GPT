@@ -53,10 +53,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                           // 使用封装的路由按钮
                           SizedBox(height: 20),
-                          NavigatorButtom(
-                            page: RegisterPage(),
-                            buttonText: '跳转到注册页面',
-                          ),
+                          // NavigatorButtom(
+                          //   page: RegisterPage(),
+                          //   buttonText: '跳转到注册页面',
+                          // ),
                         ],
                       ),
                     ],

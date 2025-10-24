@@ -11,28 +11,32 @@ class FeishuConfig {
   static final Map<String, FeishuTableConfig> tables = {
     // 用户表配置
     'users': FeishuTableConfig(
-      baseUrl: 'https://ecnas327e0p0.feishu.cn/base/Eq2QbQd8GadLUxslEc4c9VDPnzg',
+      baseUrl:
+          'https://ecnas327e0p0.feishu.cn/base/Eq2QbQd8GadLUxslEc4c9VDPnzg',
       tableId: 'tblgi7vdCzX5agp9',
       viewId: 'vewy352eFk',
     ),
-    
+
     // 成功数据表配置
     'succData': FeishuTableConfig(
-      baseUrl: 'https://ecnas327e0p0.feishu.cn/base/RdjUbTOZBasYlAsD5IZcJFrwnqg',
+      baseUrl:
+          'https://ecnas327e0p0.feishu.cn/base/RdjUbTOZBasYlAsD5IZcJFrwnqg',
       tableId: 'tblNDRS778EFeQf5', // 可以是同一个多维表格中的不同数据表
       viewId: 'vew5Dm09Vs',
     ),
-    
+
     // 可以根据需要添加更多的数据表配置
     'commonData': FeishuTableConfig(
-      baseUrl: 'https://ecnas327e0p0.feishu.cn/base/Pm5JbLDvAaerT3seHOKcKJscn9b',
+      baseUrl:
+          'https://ecnas327e0p0.feishu.cn/base/Pm5JbLDvAaerT3seHOKcKJscn9b',
       tableId: 'tblWxeC9SABXh7QC',
       viewId: 'vewtkycqiN',
     ),
-    
+
     // 账号数据表配置
     'accountData': FeishuTableConfig(
-      baseUrl: 'https://ecnas327e0p0.feishu.cn/base/ENCwbz1xdaeHLisVcoOcQnzanXc',
+      baseUrl:
+          'https://ecnas327e0p0.feishu.cn/base/ENCwbz1xdaeHLisVcoOcQnzanXc',
       tableId: 'tblIsT008N5LZ55l',
       viewId: 'vewdhTUFyI',
     ),
@@ -42,7 +46,7 @@ class FeishuConfig {
   static String getTableUrl(String tableKey) {
     final tableConfig = tables[tableKey];
     if (tableConfig == null) return '';
-    
+
     return '${tableConfig.baseUrl}?table=${tableConfig.tableId}${tableConfig.viewId.isNotEmpty ? '&view=${tableConfig.viewId}' : ''}';
   }
 
@@ -82,16 +86,17 @@ class FeishuConfig {
     if (tableConfig == null) return false;
     final appToken = getAppTokenFromBaseUrl(tableConfig.baseUrl);
     return tableConfig.baseUrl.isNotEmpty &&
-           tableConfig.tableId.isNotEmpty &&
-           appToken.isNotEmpty;
+        tableConfig.tableId.isNotEmpty &&
+        appToken.isNotEmpty;
   }
 
   // 验证全局配置是否完整
   static bool get isConfigValid {
     bool appIdValid = appId.isNotEmpty && appId != 'YOUR_APP_ID_HERE';
-    bool appSecretValid = appSecret.isNotEmpty && appSecret != 'YOUR_APP_SECRET_HERE';
+    bool appSecretValid =
+        appSecret.isNotEmpty && appSecret != 'YOUR_APP_SECRET_HERE';
     bool tablesValid = tables.isNotEmpty;
-    
+
     if (!appIdValid) {
       print('飞书配置验证失败：appId 为空或未替换默认值');
     }
@@ -101,7 +106,7 @@ class FeishuConfig {
     if (!tablesValid) {
       print('飞书配置验证失败：表格配置为空');
     }
-    
+
     final isValid = appIdValid && appSecretValid && tablesValid;
     return isValid;
   }
@@ -150,13 +155,13 @@ class FeishuTableConfig {
   factory FeishuTableConfig.fromUrl(String tableUrl) {
     final uri = Uri.parse(tableUrl);
     final pathSegments = uri.pathSegments;
-    
+
     // 构建基础URL (不含查询参数)
     String baseUrl = '${uri.scheme}://${uri.host}';
     for (int i = 0; i < pathSegments.length; i++) {
       baseUrl += '/${pathSegments[i]}';
     }
-    
+
     return FeishuTableConfig(
       baseUrl: baseUrl,
       tableId: uri.queryParameters['table'] ?? '',

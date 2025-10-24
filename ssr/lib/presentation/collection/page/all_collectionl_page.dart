@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ssr/presentation/collection/widget/collection_list_card_widget.dart';
 
 class AllCollectionlPage extends StatefulWidget {
   @override
@@ -8,6 +9,6 @@ class AllCollectionlPage extends StatefulWidget {
 class _AllCollectionlPageState extends State<AllCollectionlPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Container());
+    return Container(child: CollectionListCardWidget());
   }
 }

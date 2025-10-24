@@ -113,15 +113,6 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
   // 业务逻辑处理方法
   //------------------------------------------------------------------------------
   Future<void> _handleLogin() async {
-    if (!FeishuConfig.isConfigValid) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = '飞书配置未完成，请先配置FeishuConfig.dart文件';
-        });
-      }
-      return;
-    }
-
     final phoneNumber = _phoneNumberController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -145,10 +136,10 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
       await Future.delayed(const Duration(milliseconds: 200));
 
       // 登录验证
-      final result = await _userRepository.loginUser(
+      final result = await _userRepository.handleLogin(
         phoneNumber,
         password,
-        userProvider.currentUser.job ?? '数据端',
+        _shouldRememberCredentials,
       );
 
       if (mounted) {
@@ -166,11 +157,8 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
           password: password,
           shouldRemember: _shouldRememberCredentials,
         );
-        final userProvider = Provider.of<UserProvider>(context, listen: false);
         // 登录成功
         if (mounted) {
-          userProvider.setUserAndLogin(result['entity']);
-
           // 显示登录成功提示
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -221,6 +209,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
       }
     }
   }
+
   //------------------------------------------------------------------------------
   // UI交互控制方法
   //------------------------------------------------------------------------------
@@ -508,13 +497,13 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
             'Not A Member ?',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
-          TextButton(
-            onPressed: () => context.to(RegisterPage),
-            child: const Text(
-              'Register Now',
-              style: TextStyle(color: Color(0xff00a8e9)),
-            ),
-          ),
+          // TextButton(
+          //   onPressed: () => context.to(RegisterPage),
+          //   child: const Text(
+          //     'Register Now',
+          //     style: TextStyle(color: Color(0xff00a8e9)),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -557,7 +546,7 @@ class _SigninPageState extends State<SigninPage> with TickerProviderStateMixin {
             child: SvgPicture.asset(AppVectors.bottomPattern),
           ),
           Padding(
-            padding: EdgeInsetsGeometry.only(top: 120,left: 30,right: 30,),
+            padding: EdgeInsetsGeometry.only(top: 120, left: 30, right: 30),
             child: FadeTransition(
               opacity: AlwaysStoppedAnimation(_loginFormOpacity),
               child: Column(

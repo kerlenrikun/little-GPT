@@ -22,9 +22,12 @@ abstract class Repository<T> {
   Map<String, dynamic> toClMap(T entity);
 
   /// 泛型 - 所有服务体都会有queryRecords方法, 这里通过泛型调用
-  Future<List<T>> query(String filter) async {
+  Future<List<T>> getResource(String resourceType, String resourceId) async {
     try {
-      final result = await _cloudeApiService.queryRecords(filter: filter);
+      final result = await _cloudeApiService.getResource(
+        resourceType,
+        resourceId,
+      );
 
       if (result['success'] == true) {
         final data = result['data'] as Map<String, dynamic>;
@@ -38,94 +41,6 @@ abstract class Repository<T> {
     } catch (e) {
       print('查询数据失败: $e');
       return [];
-    }
-  }
-
-  /// 获取所有数据记录
-  Future<List<T>> getAll() async {
-    try {
-      final result = await _cloudeApiService.queryRecords();
-
-      if (result['success'] == true) {
-        final data = result['data'] as Map<String, dynamic>;
-        final items = data['data']?['items'] as List? ?? [];
-
-        return items.map<T>((item) {
-          return fromClMap(item as Map<String, dynamic>);
-        }).toList();
-      }
-      return [];
-    } catch (e) {
-      print('获取所有数据失败: $e');
-      return [];
-    }
-  }
-
-  /// 添加新的数据记录到云端
-  Future<Map<String, dynamic>> add(T entity) async {
-    try {
-      final recordData = toClMap(entity);
-      print(recordData);
-      final result = await _cloudeApiService.addRecord(recordData);
-
-      if (result['success'] == true) {
-        return {'success': true, 'message': '数据添加成功', 'data': entity};
-      } else {
-        return {
-          'success': false,
-          'message': '添加失败: ${result['message']}',
-          'error': result['error'],
-        };
-      }
-    } catch (e) {
-      return {'success': false, 'message': '添加过程中发生错误', 'error': e.toString()};
-    }
-  }
-
-  /// 更新数据记录
-  Future<Map<String, dynamic>> update(String recordId, T entity) async {
-    try {
-      if (recordId.isEmpty) {
-        return {'success': false, 'message': '记录ID为空，无法更新'};
-      }
-
-      final recordData = toClMap(entity);
-      final result = await _cloudeApiService.updateRecord(recordId, recordData);
-
-      if (result['success'] == true) {
-        return {'success': true, 'message': '数据更新成功', 'data': entity};
-      } else {
-        return {
-          'success': false,
-          'message': '更新失败: ${result['message']}',
-          'error': result['error'],
-        };
-      }
-    } catch (e) {
-      return {'success': false, 'message': '更新过程中发生错误', 'error': e.toString()};
-    }
-  }
-
-  /// 删除数据记录
-  Future<Map<String, dynamic>> delete(String recordId) async {
-    try {
-      if (recordId.isEmpty) {
-        return {'success': false, 'message': '记录ID为空，无法删除'};
-      }
-
-      final result = await _cloudeApiService.deleteRecord(recordId);
-
-      if (result['success'] == true) {
-        return {'success': true, 'message': '数据删除成功'};
-      } else {
-        return {
-          'success': false,
-          'message': '删除失败: ${result['message']}',
-          'error': result['error'],
-        };
-      }
-    } catch (e) {
-      return {'success': false, 'message': '删除过程中发生错误', 'error': e.toString()};
     }
   }
 
@@ -270,3 +185,112 @@ abstract class Repository<T> {
     }
   }
 }
+
+
+  // /// 泛型 - 所有服务体都会有queryRecords方法, 这里通过泛型调用
+  // Future<List<T>> query(String filter) async {
+  //   try {
+  //     final result = await _cloudeApiService.queryRecords(filter: filter);
+
+  //     if (result['success'] == true) {
+  //       final data = result['data'] as Map<String, dynamic>;
+  //       final items = data['data']?['items'] as List? ?? [];
+
+  //       return items.map<T>((item) {
+  //         return fromClMap(item as Map<String, dynamic>);
+  //       }).toList();
+  //     }
+  //     return [];
+  //   } catch (e) {
+  //     print('查询数据失败: $e');
+  //     return [];
+  //   }
+  // }
+
+  // /// 获取所有数据记录
+  // Future<List<T>> getAll() async {
+  //   try {
+  //     final result = await _cloudeApiService.queryRecords();
+
+  //     if (result['success'] == true) {
+  //       final data = result['data'] as Map<String, dynamic>;
+  //       final items = data['data']?['items'] as List? ?? [];
+
+  //       return items.map<T>((item) {
+  //         return fromClMap(item as Map<String, dynamic>);
+  //       }).toList();
+  //     }
+  //     return [];
+  //   } catch (e) {
+  //     print('获取所有数据失败: $e');
+  //     return [];
+  //   }
+  // }
+
+  // /// 添加新的数据记录到云端
+  // Future<Map<String, dynamic>> add(T entity) async {
+  //   try {
+  //     final recordData = toClMap(entity);
+  //     print(recordData);
+  //     final result = await _cloudeApiService.addRecord(recordData);
+
+  //     if (result['success'] == true) {
+  //       return {'success': true, 'message': '数据添加成功', 'data': entity};
+  //     } else {
+  //       return {
+  //         'success': false,
+  //         'message': '添加失败: ${result['message']}',
+  //         'error': result['error'],
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {'success': false, 'message': '添加过程中发生错误', 'error': e.toString()};
+  //   }
+  // }
+
+  // /// 更新数据记录
+  // Future<Map<String, dynamic>> update(String recordId, T entity) async {
+  //   try {
+  //     if (recordId.isEmpty) {
+  //       return {'success': false, 'message': '记录ID为空，无法更新'};
+  //     }
+
+  //     final recordData = toClMap(entity);
+  //     final result = await _cloudeApiService.updateRecord(recordId, recordData);
+
+  //     if (result['success'] == true) {
+  //       return {'success': true, 'message': '数据更新成功', 'data': entity};
+  //     } else {
+  //       return {
+  //         'success': false,
+  //         'message': '更新失败: ${result['message']}',
+  //         'error': result['error'],
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {'success': false, 'message': '更新过程中发生错误', 'error': e.toString()};
+  //   }
+  // }
+
+  // /// 删除数据记录
+  // Future<Map<String, dynamic>> delete(String recordId) async {
+  //   try {
+  //     if (recordId.isEmpty) {
+  //       return {'success': false, 'message': '记录ID为空，无法删除'};
+  //     }
+
+  //     final result = await _cloudeApiService.deleteRecord(recordId);
+
+  //     if (result['success'] == true) {
+  //       return {'success': true, 'message': '数据删除成功'};
+  //     } else {
+  //       return {
+  //         'success': false,
+  //         'message': '删除失败: ${result['message']}',
+  //         'error': result['error'],
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {'success': false, 'message': '删除过程中发生错误', 'error': e.toString()};
+  //   }
+  // }

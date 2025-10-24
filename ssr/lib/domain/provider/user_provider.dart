@@ -7,85 +7,40 @@ import 'package:ssr/presentation/auth/util/storage_utils.dart';
 
 /// 用户信息状态管理类
 class UserProvider extends ChangeNotifier {
-  // 初始化用户实体
-  UserEntity _currentUser = UserEntity(
-    fullName: '',
-    phoneNumber: '',
-    password: '',
-    createdTime: DateTime.now(),
-    lastLoginTime: DateTime.now(),
-    allowJob: {'流量端':0,'承接端':0, '直销端':0, '转化端':0, '数据端':0},
-  );
+  String _userUid = ''; // 唯一ID
+  String _userOpenid = ''; // 登录ID
+  String _userName = ''; // 用户全名
+  String _permissions = ''; // 权限
+  String _department = ''; // 部门
+  String _entryTime = ''; // 入职时间
+  String _profilePhotoUrl = ''; // 头像URL
+  String _token = ''; // 登录令牌
+  bool _fullTimeJob = false; // 是否全职
+  bool _isVip = false; // 是否会员
 
-  // 登录状态标志
-  bool _isLoggedIn = false;
+  String get token => _token;
+  String get userUid => _userUid;
+  String get userId => _userOpenid;
+  String get userName => _userName;
+  String get permissions => _permissions;
+  String get department => _department;
+  String get entryTime => _entryTime;
+  String get profilePhotoUrl => _profilePhotoUrl;
+  bool get fullTimeJob => _fullTimeJob;
+  bool get isVip => _isVip;
 
-  // 获取当前登录用户信息
-  UserEntity get currentUser => _currentUser;
-
-  // 检查用户是否已登录
-  bool get isLoggedIn => _isLoggedIn;
-
-  // 相关用户列表
-  List<UserEntity> _usersList = [];
-
-  // 获取相关用户列表
-  List<UserEntity> get usersList => _usersList;
-
-  // 设置相关用户列表
-  void setUsersList(List<UserEntity> users) {
-    _usersList = users;
+  /// 设置用户信息
+  void setUserInfoBatch(Map<String, dynamic> user) {
+    _userUid = user['user_uid'] as String? ?? '';
+    _userOpenid = user['user_openid'] as String? ?? '';
+    _userName = user['user_name'] as String? ?? '';
+    _permissions = user['permissions'] as String? ?? '';
+    _department = user['department'] as String? ?? '';
+    _entryTime = user['entry_time'] as String? ?? '';
+    _profilePhotoUrl = user['profile_photo_url'] as String? ?? '';
+    _token = user['token'] as String? ?? '';
+    _fullTimeJob = user['full_time_job'] as bool? ?? false;
+    _isVip = user['is_vip'] as bool? ?? false;
     notifyListeners();
-  }
-
-  // 设置用户信息并登录
-  void setUserAndLogin(UserEntity user) {
-    _currentUser = user;
-    _isLoggedIn = true;
-    notifyListeners();
-  }
-
-  // 登出用户
-  Future<void> logoutUser() async {
-    // 清除本地存储的登录凭证
-    await StorageUtils.clearLastLoginCredentials();
-    
-    // 重置用户信息
-    _resetUser();
-    notifyListeners();
-  }
-
-  // 更新用户信息
-  void updateUserInfo({
-    String? fullName,
-    String? phoneNumber,
-    String? password,
-    int? selectedId,
-    DateTime? createdTime,
-    DateTime? lastLoginTime,
-  }) {
-    // 利用UserEntity的copyWith方法来更新用户信息，保持不可变对象的特性
-    _currentUser = _currentUser.copyWith(
-      fullName: fullName,
-      phoneNumber: phoneNumber,
-      password: password,
-      createdTime: createdTime,
-      lastLoginTime: lastLoginTime,
-      job: selectedId != null ? JobUtils.idToString(selectedId) : _currentUser.job,
-    );
-    notifyListeners();
-  }
-
-  // 重置用户信息为默认状态
-  void _resetUser() {
-    _currentUser = UserEntity(
-      fullName: '',
-      phoneNumber: '',
-      password: '',
-      createdTime: DateTime.now(),
-      lastLoginTime: DateTime.now(),
-      allowJob: {'流量端':0,'承接端':0, '直销端':0, '转化端':0, '数据端':0},
-    );
-    _isLoggedIn = false;
   }
 }
